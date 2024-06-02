@@ -1,0 +1,134 @@
+<% layout('layouts/boilerplate')%>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+
+            <div class="card">
+                
+                <div class="card-header">
+                    <div class="d-flex">
+                        <div class="mr-auto">
+                            <h3 class="card-title">Infomation about this website</h3>
+                        </div>
+                        <div>
+                            <% if(typeof currentUser === 'undefined') {%>
+                                <a class='btn btn-primary btn-sm' href="/auth/login">Login</a>
+                                <% } else {%>
+                                    <a class='btn btn-primary btn-sm' href="/auth/details">To Account</a>
+                            <% } %>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-body">
+                    <ul>
+                        <li>
+                            This is a 'hobbist' website built solely for personal use and not be be relied up on.
+                        </li>
+                        <li>
+                            Use the form below to contact hutchybop.co.uk
+                        </li>
+                        <li>
+                            Terms & Conditions are listed under the contact form.
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- <form action="/info" method="POST">
+    <%- captcha %>
+    <button type="submit">Verify captcha</button>
+    <br />
+</form> -->
+
+
+
+<div class="container mt-3 mb-3">
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            <div class="card shadow">
+
+                <div class="card-body">
+                    <div class="d-flex">
+                        <div>
+                            <h3 class="card-title">Contact Form<a id="contactForm"></a></h3>
+                        </div>
+                    </div>
+                    
+                    <form action="/info" method="POST" class="validated-form" novalidate>
+                        <div class="form-group">
+                            <label class="form-label" for="name">Name</label>
+                            <input class="form-control" type="text" id="name" name="name" autofocus required>
+                            <div class="invalid-feedback">
+                                Please enter a name
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="email">Email</label>
+                            <input class="form-control" type="email" id="email" name="email" required>
+                            <div class="invalid-feedback">
+                                Please enter your email address
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="message">What do you want to say?</label>
+                            <textarea class="form-control" name="message" id="message" cols="30" rows="15" required></textarea>
+                            <div class="invalid-feedback">
+                                Please enter your text
+                            </div>
+                        </div>
+                        <div class="mb-2">
+                            <%- captcha %>
+                        </div>
+                        <button class="btn btn-success btn-block" id="submitBtn" disabled>Send</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+<div class="container pb-3">
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title">
+                        Terms and Conditions
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <%=tnc%>
+                </div>
+                <div class="ml-3 mb-3">
+                    <% if(typeof currentUser === 'undefined') {%>
+                        <a class='btn btn-primary btn-sm' href="/auth/login">Login</a>
+                        <% } else {%>
+                        <a class='btn btn-primary btn-sm' href="/auth/details">To Account</a>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const submitBtn = document.getElementById('submitBtn')
+
+    function cb(token) {
+        submitBtn.disabled = false
+    }
+        
+</script>
