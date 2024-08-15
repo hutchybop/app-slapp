@@ -145,12 +145,12 @@ module.exports.validateCategory = catchAsync(async(req, res, next) => {
 
 
 // Uses Joi to validate user input for the contact form
-module.exports.validateInfo = catchAsync(async(req, res, next) => {
+module.exports.validateTandC = catchAsync(async(req, res, next) => {
 
-    // infoSchema is coming from the schemas.js file
-    const { error } = infoSchema.validate(req.body)
+    // policySchema is coming from the schemas.js file
+    const { error } = tandcSchema.validate(req.body)
     // JoiFlashError function is defined above
-    JoiFlashError(error, req, res, next, '/info')
+    JoiFlashError(error, req, res, next, '/policy/tandc')
 })
 
 

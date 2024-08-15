@@ -70,7 +70,7 @@ for(let i = 0; i < all.length; i++){
 // Removes localstorage items if the list has been deleted
 let currentLocalStorage = { ...localStorage };
 for(i in currentLocalStorage){
-    if(!showAllShoppingListIds.includes(i)){
+    if(i !== 'hasVisited' && !showAllShoppingListIds.includes(i)){
         localStorage.removeItem(i)
     }
 }

@@ -141,7 +141,7 @@ module.exports.categorySchema = Joi.object().pattern(
     Joi.string().escapeHTML().required(), Joi.alternatives().try(Joi.array().items(Joi.string().escapeHTML().required()), Joi.string().escapeHTML().required())
 )
 
-module.exports.infoSchema = Joi.object({
+module.exports.tandcSchema = Joi.object({
     name: Joi.string().required().escapeHTML(),
     message: Joi.string().required().escapeHTML(),
     email: Joi.string().email().required(),

@@ -355,22 +355,3 @@ module.exports.defaultPatch = async (req, res) => {
     res.redirect('/shoppinglist/new')
 
 }
-
-
-// Email Logger route
-module.exports.logger = async (req, res) => {
-    try{
-        fs.readFile('./tracker/logs.txt', 'utf8', async (e, data) => {
-            let contentString = data.toString()
-            mail(
-                'Logger File Contents',
-                contentString
-            )
-        })
-        req.flash('success', `Email Sent!`);
-        res.redirect('/shoppinglist')
-    }catch{
-        req.flash('error', `Error sending email...`);
-        res.redirect('/shoppinglist')
-    }
-};

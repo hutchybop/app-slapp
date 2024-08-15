@@ -17,3 +17,7 @@ body {
 .card-body {
   color: #007bff
 }
+
+#cookieAlertBtn {
+  color: green;
+}
