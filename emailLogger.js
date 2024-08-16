@@ -8,7 +8,7 @@ emailLogger = async () => {
 
     try{
         //connecting to mongodb
-        const dbName = 'quiz'
+        const dbName = 'shoppinglist'
         const dbUrl = "mongodb+srv://hutch:" + process.env.MONGODB + "@hutchybop.kpiymrr.mongodb.net/" + dbName + "?retryWrites=true&w=majority&appName=hutchyBop" // For Atlas (Cloud db)
         mongoose.connect(dbUrl);
 
@@ -19,7 +19,7 @@ emailLogger = async () => {
         const reportJson = JSON.stringify(logs, null, 2)
 
         mail(
-            'ip Logs - quiz.longrunner.co.uk',
+            'ip Logs - hutchybop.co.uk',
             reportJson
         )
     }catch(error) {

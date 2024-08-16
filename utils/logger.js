@@ -1,9 +1,11 @@
 const geoip = require('micro-geoip-lite');
 const { Log } = require('../models/Log');
 
+const encodeRoute = (route) => route.replace(/\./g, '__DOT__');
+
 logger = async (req, res, next) => {
     const ip = req.ipInfo?.ip || req.ip || req.ips || 'unknown';
-    const route = req.originalUrl;
+    const route = encodeRoute(req.originalUrl);
     const now = new Date();
 
     try {
