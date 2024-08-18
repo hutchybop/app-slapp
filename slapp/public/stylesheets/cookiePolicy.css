@@ -1,0 +1,19 @@
+.cardTitles {
+    font-weight: 700;
+    color: #1E3A8A; /* Navy Blue */
+}
+.cardHeadings {
+    font-weight: 700;
+    color: #319795;
+    margin-bottom: 20px;
+}
+.cardSubHeadings {
+    font-weight: 700;
+    color: #2D3748;
+    white-space: nowrap;
+}
+.cardBodies {
+    color: #6B7280;
+    margin: 0;
+}
+
