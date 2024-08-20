@@ -88,9 +88,7 @@ module.exports.logs = async(req, res, next) => {
 
     // If API key is valid, proceed with the request
     if (hash !== apiKeyHash) {
-        req.flash('error', hash, apiKeyHash)
-        res.redirect('/')
-        // return next()
+        return next()
     }
 
     // Fetch all Log documents
