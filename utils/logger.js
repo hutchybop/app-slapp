@@ -39,7 +39,7 @@ logger = async (req, res, next) => {
 
     } catch (err) {
         console.error('Error logging visit:', err);
-        console.Console;ongamepadconnected(err)
+        console.log(err)
         next(err); // Pass the error to the next middleware
     }
 };
