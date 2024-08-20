@@ -61,21 +61,21 @@ module.exports.logs = async(req, res) => {
 
     if (!apiKeyHash) {
         
-        // Function to generate the API key hash for the user
-        function generateApiKeyHash(apiKey, secret) {
-            return crypto.createHmac('sha256', secret)
-                        .update(apiKey)
-                        .digest('hex');
-        }
-        const apiKey = process.env.APIKEY; // The actual API key
-        const secret = process.env.APISECRET; // The same secret used by the server
-        // Generate the hash
-        const apiKeyHash = generateApiKeyHash(apiKey, secret);
-        // Show the hash
-        return res.json({key: apiKeyHash})
+        // // Function to generate the API key hash for the user
+        // function generateApiKeyHash(apiKey, secret) {
+        //     return crypto.createHmac('sha256', secret)
+        //                 .update(apiKey)
+        //                 .digest('hex');
+        // }
+        // const apiKey = process.env.APIKEY; // The actual API key
+        // const secret = process.env.APISECRET; // The same secret used by the server
+        // // Generate the hash
+        // const apiKeyHash = generateApiKeyHash(apiKey, secret);
+        // // Show the hash
+        // return res.json({key: apiKeyHash})
 
-        // req.flash('error', 'Sorry you cannot do that')
-        // return res.redirect('/')
+        req.flash('error', 'Sorry you cannot do that')
+        return res.redirect('/')
     }
 
     const apiKey = process.env.APIKEY; // The single API key stored securely
