@@ -168,6 +168,7 @@ function configureHelmet() {
     } else {
         app.use(
             helmet({
+                noSniff: false,
                 contentSecurityPolicy: {
                     directives: {
                         defaultSrc: ["'self'", "*"],
