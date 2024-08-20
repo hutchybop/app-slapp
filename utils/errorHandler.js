@@ -17,9 +17,5 @@ module.exports.errorHandler = (err, req, res, next) => {
     // Generic error
     if (!err.message) err.message = 'Oh No, something went wrong.'
     
-    if (process.env.NODE_ENV !== "production") {
-        res.status(statusCode).send(err.message)
-    }else{
-        res.status(statusCode).render('policy/error', { err, title: 'Error - Something Went Wrong'})
-    }
+    res.status(statusCode).render('policy/error', { err, title: 'Error - Something Went Wrong', page: 'error'})
 };

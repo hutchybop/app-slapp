@@ -55,7 +55,7 @@ module.exports.tandcPost = (req, res) => {
 
 
 // GET - policy/logs
-module.exports.logs = async(req, res) => {
+module.exports.logs = async(req, res, next) => {
 
     const apiKeyHash = req.query.key;
 
@@ -74,8 +74,7 @@ module.exports.logs = async(req, res) => {
         // // Show the hash
         // return res.json({key: apiKeyHash})
 
-        req.flash('error', 'Sorry you cannot do that')
-        return res.redirect('/')
+        return next()
     }
 
     const apiKey = process.env.APIKEY; // The single API key stored securely
@@ -88,8 +87,7 @@ module.exports.logs = async(req, res) => {
 
     // If API key is valid, proceed with the request
     if (hash !== apiKeyHash) {
-        req.flash('error', 'Sorry you cannot do that')
-        return res.redirect('/')
+        return next()
     }
 
     // Fetch all Log documents
