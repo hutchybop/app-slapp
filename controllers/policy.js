@@ -77,6 +77,7 @@ module.exports.logs = async(req, res, next) => {
         return next()
     }
 
+    console.log(process.env.APIKEY, process.env.APISECRET, req.query.key)
     const apiKey = process.env.APIKEY; // The single API key stored securely
     const secret = process.env.APISECRET; // A secret key stored securely
 
