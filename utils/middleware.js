@@ -1,5 +1,5 @@
 const {
-    infoSchema, loginSchema, registerSchema, forgotSchema, resetSchema, detailsSchema, deleteSchema, mealSchema,
+    tandcSchema, loginSchema, registerSchema, forgotSchema, resetSchema, detailsSchema, deleteSchema, mealSchema,
     ingredientSchema, defaultSchema, shoppingListMealsSchema, categorySchema, shoppingListIngredientsSchema
 } = require('../models/schemas.js')
 const { Meal } = require('../models/meal')
@@ -147,7 +147,7 @@ module.exports.validateCategory = catchAsync(async(req, res, next) => {
 // Uses Joi to validate user input for the contact form
 module.exports.validateTandC = catchAsync(async(req, res, next) => {
 
-    // policySchema is coming from the schemas.js file
+    // tandcSchema is coming from the schemas.js file
     const { error } = tandcSchema.validate(req.body)
     // JoiFlashError function is defined above
     JoiFlashError(error, req, res, next, '/policy/tandc')
