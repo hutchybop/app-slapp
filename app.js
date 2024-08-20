@@ -89,21 +89,14 @@ app.use('/favicon.ico', (req, res) => {
 
 
 // Setting up the app
-app.engine('ejs', ejsMate); // Tells express to use ejsMate for rendering .ejs html files
+app.engine('ejs', ejsMate); // Tells express to use ejsmate for rendering .ejs html files
 app.set('view engine', 'ejs'); // Sets ejs as the default engine
 app.set('views', path.join(__dirname, 'views')); // Forces express to look at views directory for .ejs files
 app.use(express.urlencoded({ extended: true })); // Makes req.body available
 app.use(express.json()); // Middleware to parse JSON bodies
 app.use(methodOverride('_method')); // Allows us to add HTTP verbs other than post
-// Custom middleware to serve static files with explicit MIME type for .js files
-app.use(express.static(path.join(__dirname, '/public'), {
-    setHeaders: (res, path) => {
-        if (path.endsWith('.js')) {
-            res.setHeader('Content-Type', 'text/javascript'); // Ensure .js files are served with correct MIME type
-        }
-    }
-}));
-app.use(mongoSanitize()); // Helps to stop MongoDB injection by not allowing certain characters in the query string
+app.use(express.static(path.join(__dirname, '/public'))) // Serves static files (css, js, imgaes) from public directory
+app.use(mongoSanitize()) // Helps to stop mongo injection by not allowing certain characters in the query string
 
 
 // Logs all routes requested
