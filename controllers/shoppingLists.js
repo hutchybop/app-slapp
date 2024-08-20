@@ -10,7 +10,7 @@ const fs = require('fs');
 module.exports.landing = async (req, res) => {
 
     if(req.user === undefined){
-        res.render('shoppinglist/slapp', {title: 'Shopping List App - Create Your Weekly ShoppingList', page: 'slSLapp'})
+        res.render('shoppinglist/slapp', {title: 'Shopping List App - Create Your Weekly ShoppingList', page: 'slSlapp'})
     }else{
 
         const list = await ShoppingList.find({ author: req.user._id })

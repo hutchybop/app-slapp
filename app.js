@@ -201,7 +201,7 @@ function configureHelmet() {
     }
 }
 // Apply helmet configuration
-// configureHelmet();
+configureHelmet();
 
 
 //Setting up the session
