@@ -88,7 +88,7 @@ module.exports.logs = async(req, res, next) => {
 
     // If API key is valid, proceed with the request
     if (hash !== apiKeyHash) {
-        req.flash('error', process.env.APIKEY, process.env.APISECRET, req.query.key)
+        req.flash('error', hash, apiKeyHash)
         res.redirect('/')
         // return next()
     }
