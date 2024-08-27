@@ -4,7 +4,11 @@ const { Log } = require('../models/Log');
 const encodeRoute = (route) => route.replace(/\./g, '__DOT__');
 
 logger = async (req, res, next) => {
-    const ip = req.ipInfo?.ip || req.ip || req.ips || 'unknown';
+    const ip = req.ipInfo?.ip 
+               || req.headers['x-forwarded-for']?.split(',')[0].trim() 
+               || req.ip 
+               || req.ips[0] 
+               || 'unknown';
     const route = encodeRoute(req.originalUrl);
     const now = new Date();
 
@@ -22,7 +26,7 @@ logger = async (req, res, next) => {
             await log.save();
         } else {
             // Document does not exist, create a new one
-            const geo = geoip(ip)
+            const geo = await geoip(ip)
             const newLog = new Log({
                 ip,
                 country: geo.country || 'Unknown',
