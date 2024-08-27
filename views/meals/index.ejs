@@ -26,7 +26,7 @@
                     <% for (let i of items) { %>
                     <% if (i.mealType === 'Main') { %>
                     <li class="list-group-item">
-                        <a href="/meals/<%= i.id %>"><strong><%= i.mealName %></strong></a>
+                        <a href="/meals/<%= i.id %>"><%= i.mealName %></a>
                     </li>
                     <% } %>
                     <% } %>
@@ -44,7 +44,7 @@
                     <% for (let i of items) { %>
                     <% if (i.mealType === 'Lunch') { %>
                     <li class="list-group-item">
-                        <a href="/meals/<%= i.id %>"><strong><%= i.mealName %></strong></a>
+                        <a href="/meals/<%= i.id %>"><%= i.mealName %></a>
                     </li>
                     <% } %>
                     <% } %>
@@ -62,7 +62,7 @@
                     <% for (let i of items) { %>
                     <% if (i.mealType === 'Breakfast') { %>
                     <li class="list-group-item">
-                        <a href="/meals/<%= i.id %>"><strong><%= i.mealName %></strong></a>
+                        <a href="/meals/<%= i.id %>"><%= i.mealName %></a>
                     </li>
                     <% } %>
                     <% } %>
@@ -85,7 +85,7 @@
                     <% for (let i of items) { %>
                     <% if (i.mealType === 'Nonfood Items' || i.mealType === 'Constant Weekly Items') { %>
                     <li class="list-group-item">
-                        <a href="/meals/<%= i.id %>"><strong><%= i.mealName %></strong></a>
+                        <a href="/meals/<%= i.id %>"><%= i.mealName %></a>
                     </li>
                     <% } %>
                     <% } %>
@@ -103,7 +103,7 @@
                     <% for (let i of items) { %>
                     <% if (i.mealType === 'Archive') { %>
                     <li class="list-group-item">
-                        <a href="/meals/<%= i.id %>"><strong><%= i.mealName %></strong></a>
+                        <a href="/meals/<%= i.id %>"><%= i.mealName %></a>
                     </li>
                     <% } %>
                     <% } %>
