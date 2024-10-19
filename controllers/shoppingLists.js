@@ -5,10 +5,7 @@ const { copyListFunc } = require('../utils/copyToClip')
 
 
 // Landing - shoppinglist
-module.exports.landing = async (req, res) => {
-
-    console.log(req.user)
-    
+module.exports.landing = async (req, res) => {  
 
     if(req.user === undefined){
         res.render('shoppinglist/slapp', { title: 'Shopping List App - Create Your Weekly ShoppingList', page: 'slSlapp' })

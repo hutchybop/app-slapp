@@ -247,33 +247,7 @@ app.get('/policy/logs', catchAsync(policy.logs))
 app.get('/auth/register', (users.register))
 app.post('/auth/register', validateRegister, catchAsync(users.registerPost))
 app.get('/auth/login', users.login)
-
-// app.post('/auth/login', validateLogin, passport.authenticate('local', { failureFlash: true, failureRedirect: '/auth/login' }), catchAsync(users.loginPost))
-
-
-app.post('/auth/login', validateLogin, (req, res, next) => {
-    passport.authenticate('local', (err, user, info) => {
-        if (err) {
-            console.error('Authentication error:', err);
-            return next(err);
-        }
-        if (!user) {
-            console.error('No user found:', info.message);
-            return res.redirect('/auth/login');
-        }
-        req.logIn(user, (err) => {
-            if (err) {
-                console.error('Login error:', err);
-                return next(err);
-            }
-            console.log('User logged in successfully:', user.username);
-            return res.redirect('/');
-        });
-    })(req, res, next);
-}, catchAsync(users.loginPost));
-
-
-
+app.post('/auth/login', validateLogin, passport.authenticate('local', { failureFlash: true, failureRedirect: '/auth/login' }), catchAsync(users.loginPost))
 app.get('/auth/logout', users.logout)
 app.get('/auth/forgot', users.forgot)
 app.post('/auth/forgot',  validateForgot, catchAsync(users.forgotPost))
