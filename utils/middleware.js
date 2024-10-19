@@ -164,16 +164,6 @@ module.exports.isLoggedIn = (req, res, next) => {
     next();
 }
 
-module.exports.isAdmin = (req, res, next) => {
-
-    if (req.user.id !== '5fc3a703cfa409377cabb008') {
-        req.session.returnTo = req.originalUrl
-        req.flash('error', 'You do not permission to do that');
-        return res.redirect('/')
-    }
-    next();
-}
-
 
 module.exports.isAuthorMeal = catchAsync(async (req, res, next) => {
 

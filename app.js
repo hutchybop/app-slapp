@@ -15,14 +15,8 @@ const flash = require('connect-flash');
 const back = require('express-back');
 const mongoSanitize = require('express-mongo-sanitize')
 const helmet = require('helmet');
-const https = require('node:https');
 const compression = require('compression')
 const favicon = require('serve-favicon')
-
-// // database lookup for blockedIPs
-// const BlockedIP = require('./models/blockedIP')
-// const { reviewIp } = require('./utils/ipLookup');
-// const tnc = require('./utils/tnc')
 
 // Required for passport
 const passport = require('passport');
@@ -47,7 +41,7 @@ const User = require('./models/user');
 const {
     validateTandC, validateLogin, validateRegister, validateForgot, validateReset, validateDetails, validateDelete, 
     validateMeal, validateIngredient, validatedefault, validateshoppingListMeals, validateshoppingListIngredients, validateCategory, isLoggedIn, 
-    isAdmin, isAuthorMeal, isAuthorIngredient, isAuthorShoppingList,
+    isAuthorMeal, isAuthorIngredient, isAuthorShoppingList,
 } = require('./utils/middleware');
 
 
@@ -55,16 +49,8 @@ const {
 const app = express();
 
 
-// Setting up SSL Certificates
-const https_options = {
-    key: process.env.HUTCHYBOP_KEY.replace(/\\n/g, '\n'),
-    cert: process.env.CRT_CODE.replace(/\\n/g, '\n'),
-    keepAlive: false
-};
-
-
 // Setting up mongoose
-const dbName = "shoppinglist"
+const dbName = "slapp"
 let dbUrl
 if (process.env.NODE_ENV !== "production") {
     dbUrl = "mongodb://127.0.0.1:27017/" + dbName; // For local db (will not work in production)
@@ -324,12 +310,7 @@ app.all('*', (req, res, next) => {
 // Error Handler, from utils.
 app.use(errorHandler)
 
-
-// http.createServer(app).listen(80);
-app.listen(80);
-
-
-// https Server (Port 443)
-https.createServer(https_options, app).listen(443, () => {
-    console.log('Server listening on PORT 443 (https)');
+// Start server on port 3001 using HTTP
+app.listen(3001, () => {
+    console.log('Server listening on PORT 3001 (http)');
 });
