@@ -191,7 +191,7 @@ configureHelmet();
 
 //Setting up the session
 const sessionConfig = {
-    name: 'slapp', // Name for the session cookie
+    name: 'hutchyBop', // Name for the session cookie
     secret: process.env.SESSION_KEY, // Secures the session
     resave: false, // Do not save session if unmodified
     saveUninitialized: false, // Do not create session until something stored
