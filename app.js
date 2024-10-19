@@ -199,8 +199,7 @@ const sessionConfig = {
         maxAge: 1000 * 60 * 60 * 24 * 7 * 2, // 14 days
         httpOnly: true, // Prevent client-side JavaScript from accessing the cookie
         SameSite: 'strict', // Protect against CSRF
-        // secure: process.env.NODE_ENV === "production", // Only send cookie over HTTPS
-        secure: false
+        secure: process.env.NODE_ENV === "production", // Only send cookie over HTTPS
     },
     store: MongoStore.create({ 
         mongoUrl: dbUrl
