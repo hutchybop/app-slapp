@@ -11,7 +11,7 @@ const crypto = require('crypto')
 
 // Register - User (GET)
 module.exports.register = (req, res) => {
-    res.render('users/auth/register', { title: 'Register at hutchybop.co.uk', page: 'authRegister' })
+    res.render('users/auth/register', { title: 'Register at slapp.longrunner.co.uk', page: 'authRegister' })
 }
 
 
@@ -34,7 +34,7 @@ module.exports.registerPost = async (req, res) => {
     
                 // Send email to me to alert that a new user has signed up
                 mail(
-                    'New User Registered on hutchybop.co.uk',
+                    'New User Registered on slapp.longrunner.co.uk',
                     'Hello,\n\n' +
                     'A new User has registered! \n\n' + 'Username: ' + username
                 )
@@ -56,7 +56,7 @@ module.exports.registerPost = async (req, res) => {
 
 // Login - user (GET)
 module.exports.login = (req, res) => {
-    res.render('users/auth/login', { title: 'Login to hutchybop.co.uk', page: 'generic' });
+    res.render('users/auth/login', { title: 'Login to slapp.longrunner.co.uk', page: 'generic' });
 }
 
 
@@ -109,7 +109,7 @@ module.exports.forgotPost = async (req, res) => {
         await foundUser.save()
 
         mail(
-            'www.hutchybop.co.uk Password Reset',
+            'slapp.longrunner.co.uk.co.uk Password Reset',
             'You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n' +
                 'Please click on the following link, or paste this into your browser to complete the process:\n\n' +
                 'http://' + req.headers.host + '/auth/reset/' + token + '\n\n' +
@@ -160,9 +160,9 @@ module.exports.resetPost = async (req, res) => {
         }
 
         mail(
-            'Your password has been changed for www.hutchybop.co.uk',
+            'Your password has been changed for slapp.longrunner.co.uk',
             'Hello,\n\n' +
-              'This is a confirmation that the password for your account ' + foundUser.email + ' on www.hutchybop.co.uk has just been changed.\n',
+              'This is a confirmation that the password for your account ' + foundUser.email + ' on slapp.longrunner.co.uk has just been changed.\n',
             foundUser.email
         )
 
@@ -224,23 +224,23 @@ module.exports.detailsPost = async (req, res) => {
             const detailsUser = await User.findById(id)
     
             mail(
-                'Details Updated - hutchybop.co.uk',
+                'Details Updated - slapp.longrunner.co.uk',
                 'Hello,\n\n' +
-                    'Your details on hutchybop.co.uk have been changed, your new details are:' + '\n\n' + 
+                    'Your details on slapp.longrunner.co.uk have been changed, your new details are:' + '\n\n' + 
                     `Email: ${detailsUser.email}` + '\n\n' +
                     `Username: ${detailsUser.username}` + '\n\n' +
-                    'If you did not make these changes please conact' + process.env.EMAIL_USER,
+                    'If you did not make these changes please conact admin@slapp.longrunner.co.uk',
                     detailsUser.email
               )
             
             if(detailsUser.email != updatedUser.email){
                 mail(
-                    'Details Updated - hutchybop.co.uk',
+                    'Details Updated - slapp.longrunner.co.uk',
                     'Hello,\n\n' +
-                        'Your details on hutchybop.co.uk have been changed, your new details are:' + '\n\n' + 
+                        'Your details on slapp.longrunner.co.uk have been changed, your new details are:' + '\n\n' + 
                         `Email: ${detailsUser.email}` + '\n\n' +
                         `Username: ${detailsUser.username}` + '\n\n' +
-                        'If you did not make these changes please conact' + process.env.EMAIL_USER,
+                        'If you did not make these changes please conact admin@slapp.longrunner.co.uk',
                         updatedUser.email
                   )
             }
@@ -290,7 +290,7 @@ module.exports.delete = async (req, res) => {
             req.flash('success', `Succesfully deleted Account for '${req.user.email}'`)
         
             mail(
-                'Account deleted on hutchybop.co.uk',
+                'Account deleted on slapp.longrunner.co.uk',
                 'Hello,\n\n' +
                   'This is confirm that your account has been deleted',
                 req.user.email

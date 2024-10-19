@@ -1,4 +1,3 @@
-const tnc = require('../utils/tnc')
 const { mail } = require('../utils/mail')
 const crypto = require('crypto');
 const { Log } = require('../models/Log')
@@ -15,7 +14,7 @@ module.exports.cookiePolicy = (req, res) => {
 // GET - tandc
 module.exports.tandc = (req, res) => {
 
-    res.render('policy/tandc', { captcha: res.recaptcha, title: 'hutchybop.co.uk Information Page', page: 'tandc', tnc: tnc.tnc });
+    res.render('policy/tandc', { captcha: res.recaptcha, title: 'slapp.longrunner.co.uk Information Page', page: 'tandc' });
 }
 
 
@@ -25,9 +24,9 @@ module.exports.tandcPost = (req, res) => {
     if (!req.recaptcha.error) {
 
         mail(
-            'Contact Form Submitted - hutchybop.co.uk',
+            'Contact Form Submitted - slapp.longrunner.co.uk',
             'Hello,\n\n' +
-                'Your message to hutchybop.co.uk has been submittted. The details are below' + '\n\n' + 
+                'Your message to slapp.longrunner.co.uk has been submittted. The details are below' + '\n\n' + 
                 `Name: ${req.body.name}` + '\n\n' +
                 `Email: ${req.body.email}` + '\n\n' +
                 `Message: ${req.body.message}`,
@@ -35,7 +34,7 @@ module.exports.tandcPost = (req, res) => {
         )
     
         mail(
-            'Contact Form Submitted - hutchybop.co.uk',
+            'Contact Form Submitted - slapp.longrunner.co.uk',
             'Hello,\n\n' +
                 'A new message has been submitted' + '\n\n' + 
                 `Name: ${req.body.name}` + '\n\n' +

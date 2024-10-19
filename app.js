@@ -185,7 +185,7 @@ configureHelmet();
 
 //Setting up the session
 const sessionConfig = {
-    name: 'hutchyBop', // Name for the session cookie
+    name: 'slapp', // Name for the session cookie
     secret: process.env.SESSION_KEY, // Secures the session
     resave: false, // Do not save session if unmodified
     saveUninitialized: false, // Do not create session until something stored
@@ -225,11 +225,6 @@ app.use(async(req, res, next) => {
     // Setting up flash
     res.locals.success = req.flash('success');
     res.locals.error = req.flash('error');
-
-    // Auto redirects to https:// if in deployment mode
-    if(String(req.secure) == process.env.REQ_SECURE){
-        return res.redirect('https://' + req.headers.host + req.url)
-    }
 
     next();
 });
