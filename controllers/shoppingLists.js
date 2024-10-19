@@ -2,12 +2,12 @@ const { Meal } = require('../models/meal')
 const { ShoppingList } = require('../models/shoppingList')
 const { Category } = require('../models/category')
 const { copyListFunc } = require('../utils/copyToClip')
-const {mail} = require('../utils/mail')
-const fs = require('fs');
 
 
 // Landing - shoppinglist
 module.exports.landing = async (req, res) => {
+
+    console.log(req.user)
 
     if(req.user === undefined){
         res.render('shoppinglist/slapp', {title: 'Shopping List App - Create Your Weekly ShoppingList', page: 'slSlapp'})
