@@ -312,6 +312,7 @@ app.all('*', (req, res, next) => {
 app.use(errorHandler)
 
 // Start server on port 3001 using HTTP
-app.listen(3001, () => {
-    console.log('Server listening on PORT 3001 (http)');
+const port = 3001
+app.listen(port, () => {
+    console.log('Server listening on PORT', port);
 });
