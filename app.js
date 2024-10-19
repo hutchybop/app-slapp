@@ -50,7 +50,7 @@ const app = express();
 
 
 // Setting up mongoose
-const dbName = "slapp"
+const dbName = "shoppinglist"
 let dbUrl
 // if (process.env.NODE_ENV !== "production") {
 //     dbUrl = "mongodb://127.0.0.1:27017/" + dbName; // For local db (will not work in production)
