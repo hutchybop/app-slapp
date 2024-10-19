@@ -191,7 +191,7 @@ configureHelmet();
 
 //Setting up the session
 const sessionConfig = {
-    name: 'hutchyBop', // Name for the session cookie
+    name: 'slapp', // Name for the session cookie
     secret: process.env.SESSION_KEY, // Secures the session
     resave: false, // Do not save session if unmodified
     saveUninitialized: false, // Do not create session until something stored
@@ -199,7 +199,8 @@ const sessionConfig = {
         maxAge: 1000 * 60 * 60 * 24 * 7 * 2, // 14 days
         httpOnly: true, // Prevent client-side JavaScript from accessing the cookie
         SameSite: 'strict', // Protect against CSRF
-        secure: process.env.NODE_ENV === "production", // Only send cookie over HTTPS
+        // secure: process.env.NODE_ENV === "production", // Only send cookie over HTTPS
+        secure: false
     },
     store: MongoStore.create({ 
         mongoUrl: dbUrl
