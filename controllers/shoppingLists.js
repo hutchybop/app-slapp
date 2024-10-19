@@ -2,15 +2,18 @@ const { Meal } = require('../models/meal')
 const { ShoppingList } = require('../models/shoppingList')
 const { Category } = require('../models/category')
 const { copyListFunc } = require('../utils/copyToClip')
+const User = require('../models/user');
 
 
 // Landing - shoppinglist
 module.exports.landing = async (req, res) => {
 
     console.log(req.user)
+    
 
     if(req.user === undefined){
-        res.render('shoppinglist/slapp', {title: 'Shopping List App - Create Your Weekly ShoppingList', page: 'slSlapp'})
+        const test  = await User.find();
+        res.render('shoppinglist/slapp', {test, title: 'Shopping List App - Create Your Weekly ShoppingList', page: 'slSlapp'})
     }else{
 
         const list = await ShoppingList.find({ author: req.user._id })
