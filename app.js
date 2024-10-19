@@ -48,6 +48,11 @@ const {
 // Setting up express
 const app = express();
 
+// If in production, tells express about nginx proxy
+if (process.env.NODE_ENV === "production") {
+    app.set('trust proxy', 1);
+}
+
 
 // Setting up mongoose
 const dbName = "slapp"
