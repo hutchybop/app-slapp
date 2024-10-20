@@ -16,7 +16,7 @@ module.exports.mail = async(subject, text, to) => {
         });
 
         const mailOptions = {
-            to: to || process.env.EMAIL_ADDRESS,
+            to: to || process.env.EMAIL_USER,
             from: emailUser,
             subject: subject,
             text: text
