@@ -11,7 +11,7 @@ module.exports.cookiePolicy = (req, res) => {
 }
 
 
-// GET - tandc
+// GET - policy/tandc
 module.exports.tandc = (req, res) => {
 
     res.render('policy/tandc', { captcha: res.recaptcha, title: 'slapp.longrunner.co.uk Information Page', page: 'tandc' });
