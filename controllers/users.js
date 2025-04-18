@@ -36,7 +36,7 @@ module.exports.registerPost = async (req, res) => {
                 mail(
                     'New User Registered on slapp.longrunner.co.uk',
                     'Hello,\n\n' +
-                    'A new User has registered! \n\n' + 'Username: ' + username
+                    'A new User has registered! \n\n' + 'Username: ' + username + '\n\n' + 'Email: ' + email
                 )
     
                 req.flash('success', 'You are logged in!');
