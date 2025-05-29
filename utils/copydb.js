@@ -1,5 +1,5 @@
 // Copies the shoppinglist db into a new db called slapp
-// To use run: mongosh "mongodb+srv://hutchybop.kpiymrr.mongodb.net/" --apiVersion 1 --username hutch --file copyDB.js
+// To run check .env
 
 const sourceDB = 'shoppinglist'; // Source database name
 const targetDB = 'slapp'; // Target database name

@@ -4,6 +4,7 @@ const nodemailer = require('nodemailer');
 module.exports.mail = async(subject, text, to) => {
 
         const emailUser = process.env.EMAIL_USER
+        const aliasEmail = process.env.ALIAS_EMAIL
 
         const smtpTransport = nodemailer.createTransport({
             host: 'smtp.zoho.eu',
@@ -16,8 +17,8 @@ module.exports.mail = async(subject, text, to) => {
         });
 
         const mailOptions = {
-            to: to || process.env.EMAIL_USER,
-            from: emailUser,
+            to: to || aliasEmail,
+            from: aliasEmail,
             subject: subject,
             text: text
         };

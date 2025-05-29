@@ -23,8 +23,7 @@ module.exports.newUserSeed = async (userId) => {
     await newCategory.save();
     
     // 'Defualt' user ID to be seeded from
-     const defaultUserId = process.env.DEFAULT_MEALS_ID
-    
+    const defaultUserId = process.env.DEFAULT_USER_ID //defaultMeals
 
     // Searches for all the defaultUser ingredients
     const defaultUserIngredients = await Ingredient.find({author: defaultUserId})
