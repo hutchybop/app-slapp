@@ -13,6 +13,7 @@ node_modules/
 
 # logging files
 output*.txt
+output*.log
 
 # TODO file
 TODO.js
