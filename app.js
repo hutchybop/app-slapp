@@ -84,11 +84,18 @@ app.use('/favicon.ico', (req, res) => {
 app.engine('ejs', ejsMate); // Tells express to use ejsmate for rendering .ejs html files
 app.set('view engine', 'ejs'); // Sets ejs as the default engine
 app.set('views', path.join(__dirname, 'views')); // Forces express to look at views directory for .ejs files
-app.use(express.urlencoded({ extended: true })); // Makes req.body available
 app.use(express.json()); // Middleware to parse JSON bodies
+app.use(express.urlencoded({ extended: true })); // Makes req.body available
 app.use(methodOverride('_method')); // Allows us to add HTTP verbs other than post
 app.use(express.static(path.join(__dirname, '/public'))) // Serves static files (css, js, imgaes) from public directory
-app.use(mongoSanitize()) // Helps to stop mongo injection by not allowing certain characters in the query string
+
+// Instead of app.use(mongoSanitize()); req.query is now read only in express 5, So inline sanitation is required in the rest of the code
+// Helps to stop mongo injection by not allowing certain characters in the query string
+app.use((req, res, next) => {
+    if (req.body) req.body = mongoSanitize.sanitize(req.body, { replaceWith: '_' });
+    if (req.params) req.params = mongoSanitize.sanitize(req.params, { replaceWith: '_' });
+    next();
+});
 
 
 // Logs all routes requested
