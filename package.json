@@ -24,7 +24,7 @@
     "express-session": "^1.18.2",
     "fs": "0.0.1-security",
     "helmet": "^8.1.0",
-    "joi": "^17.13.3",
+    "joi": "^18.0.1",
     "method-override": "^3.0.0",
     "micro-geoip-lite": "^1.0.1",
     "mongoose": "^8.19.1",
