@@ -9,10 +9,10 @@
   "author": "hutchyBop",
   "license": "ISC",
   "dependencies": {
+    "@codecorn/connect-flash-new": "^1.0.4",
     "async": "^3.2.6",
     "axios": "^1.12.2",
     "compression": "^1.8.1",
-    "connect-flash": "^0.1.1",
     "connect-mongo": "^5.1.0",
     "dotenv": "^17.2.3",
     "ejs": "^3.1.10",
