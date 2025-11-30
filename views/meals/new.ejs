@@ -194,10 +194,8 @@
         itemsArray.push('<%=i.name%>')
     <% } %>;
     let mealNames = {}
-    <% for (let i =0; i < Object.keys(mealNames).length; i++) { %>
-        <% let name = Object.keys(mealNames)[i] %>
-        <% let type = Object.values(mealNames)[i] %>
-        mealNames["<%- name %>"] = "<%- type %>"
+    <% for (let key in mealNames) { %>
+        mealNames["<%- key %>"] = "<%- mealNames[key] %>"
     <% } %>;
 
 </script>

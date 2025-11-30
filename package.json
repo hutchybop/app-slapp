@@ -4,7 +4,9 @@
   "description": "Shopping list app for weekly shopping",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
   },
   "author": "hutchyBop",
   "license": "ISC",
@@ -35,5 +37,11 @@
     "path": "^0.12.7",
     "sanitize-html": "^2.17.0",
     "serve-favicon": "^2.5.1"
+  },
+  "devDependencies": {
+    "eslint": "^9.39.1",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.4",
+    "prettier": "^3.7.3"
   }
 }

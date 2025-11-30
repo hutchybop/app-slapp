@@ -224,5 +224,9 @@
     <% for (let i of items) { %>
         itemsArray.push('<%=i.name%>')
     <%}%>;
+    let mealNames = {}
+    <% for (let key in mealNames) { %>
+        mealNames["<%- key %>"] = "<%- mealNames[key] %>"
+    <% } %>;
 
 </script>
