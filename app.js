@@ -68,9 +68,14 @@ if (process.env.NODE_ENV === "production") {
 }
 
 // Setting up mongoose
-const dbName = "slapp"
-let dbUrl
-dbUrl = "mongodb+srv://hutch:" + process.env.MONGODB + "@hutchybop.kpiymrr.mongodb.net/" + dbName + "?retryWrites=true&w=majority&appName=hutchyBop" // For Atlas (Cloud db)
+const dbName = "slapp";
+let dbUrl;
+dbUrl =
+  "mongodb+srv://hutch:" +
+  process.env.MONGODB +
+  "@hutchybop.kpiymrr.mongodb.net/" +
+  dbName +
+  "?retryWrites=true&w=majority&appName=hutchyBop"; // For Atlas (Cloud db)
 mongoose.connect(dbUrl);
 // Error Handling for the db connection
 const db = mongoose.connection;
