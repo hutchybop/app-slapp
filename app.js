@@ -6,7 +6,7 @@ if (process.env.NODE_ENV !== "production") {
 const express = require("express");
 const path = require("path");
 const mongoose = require("mongoose");
-const MongoStore = require("connect-mongo");
+const { MongoStore } = require("connect-mongo");
 const ejsMate = require("ejs-mate");
 const methodOverride = require("method-override");
 const session = require("express-session");
