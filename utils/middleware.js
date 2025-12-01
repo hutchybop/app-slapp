@@ -150,7 +150,11 @@ module.exports.validateTandC = catchAsync(async (req, res, next) => {
 });
 
 module.exports.isLoggedIn = (req, res, next) => {
-  if (!req.isAuthenticated()) {
+  if (
+    !req.user ||
+    !req.session.userId ||
+    !req.user._id.equals(req.session.userId)
+  ) {
     req.session.returnTo = req.originalUrl;
     req.flash("error", "You must be signed in");
     return res.redirect("/auth/login");

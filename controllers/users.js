@@ -3,10 +3,10 @@ const { Meal } = require("../models/meal");
 const { Ingredient } = require("../models/ingredient");
 const { ShoppingList } = require("../models/shoppingList");
 const { Category } = require("../models/category");
-const catchAsync = require("../utils/catchAsync");
 const { mail } = require("../utils/mail");
 const { newUserSeed } = require("../utils/newUserSeed");
-const crypto = require("crypto");
+const PasswordUtils = require("../utils/passwordUtils");
+const { loginUser, logoutUser } = require("../utils/auth");
 
 // Register - User (GET)
 module.exports.register = (req, res) => {
@@ -23,33 +23,26 @@ module.exports.registerPost = async (req, res) => {
       const { email, username, password } = req.body;
       const user = await new User({ username, email });
       const registeredUser = await User.register(user, password);
-      req.logIn(
-        registeredUser,
-        catchAsync(async (err) => {
-          if (err) {
-            req.flash("Register Error", err);
-            return res.redirect("/auth/register");
-          }
 
-          // Runs newUserSeed function to copy all the meals and ingredients from the default user to the new user
-          newUserSeed(req.user._id);
+      await loginUser(req, registeredUser);
 
-          // Send email to me to alert that a new user has signed up
-          mail(
-            "New User Registered on slapp.longrunner.co.uk",
-            "Hello,\n\n" +
-              "A new User has registered! \n\n" +
-              "Username: " +
-              username +
-              "\n\n" +
-              "Email: " +
-              email,
-          );
+      // Runs newUserSeed function to copy all the meals and ingredients from the default user to the new user
+      newUserSeed(req.user._id);
 
-          req.flash("success", "You are logged in!");
-          res.redirect("/shoppinglist");
-        }),
+      // Send email to me to alert that a new user has signed up
+      mail(
+        "New User Registered on slapp.longrunner.co.uk",
+        "Hello,\n\n" +
+          "A new User has registered! \n\n" +
+          "Username: " +
+          username +
+          "\n\n" +
+          "Email: " +
+          email,
       );
+
+      req.flash("success", "You are logged in!");
+      res.redirect("/shoppinglist");
     } else {
       req.flash("error", "You must accept the terms and conditions.");
       res.redirect("/auth/register");
@@ -77,13 +70,13 @@ module.exports.loginPost = async (req, res) => {
 };
 
 // Logout - user (GET)
-module.exports.logout = (req, res) => {
-  req.logout((err) => {
-    if (err) {
-      req.flash("Logout Error: " + err);
-    }
-  });
+module.exports.logout = async (req, res) => {
   req.flash("success", "Successfully logged out");
+  try {
+    await logoutUser(req);
+  } catch (err) {
+    req.flash("error", "Logout Error: " + err);
+  }
   res.redirect("/");
 };
 
@@ -95,8 +88,7 @@ module.exports.forgot = (req, res) => {
 // Forgot - user (POST)
 module.exports.forgotPost = async (req, res) => {
   try {
-    let buf = await crypto.randomBytes(20);
-    let token = buf.toString("hex");
+    const token = PasswordUtils.generateResetToken();
 
     const foundUser = await User.findOne({ email: req.body.email });
     if (!foundUser) {
@@ -105,7 +97,7 @@ module.exports.forgotPost = async (req, res) => {
     }
 
     foundUser.resetPasswordToken = token;
-    foundUser.resetPasswordExpires = Date.now() + 3600000; // 1 hour
+    foundUser.resetPasswordExpires = PasswordUtils.generateResetTokenExpiry();
 
     await foundUser.save();
 
@@ -154,7 +146,7 @@ module.exports.reset = async (req, res) => {
 };
 
 // Reset - user (POST)
-module.exports.resetPost = async (req, res, next) => {
+module.exports.resetPost = async (req, res) => {
   try {
     const foundUser = await User.findOne({
       resetPasswordToken: req.params.token,
@@ -169,12 +161,7 @@ module.exports.resetPost = async (req, res, next) => {
       foundUser.resetPasswordToken = undefined;
       foundUser.resetPasswordExpires = undefined;
       await foundUser.save();
-      req.login(
-        foundUser,
-        catchAsync(async (err) => {
-          if (err) return next(err);
-        }),
-      );
+      await loginUser(req, foundUser);
     } else {
       req.flash("error", "Passwords do not match.");
       return res.redirect("");
@@ -255,7 +242,7 @@ module.exports.detailsPost = async (req, res) => {
           "\n\n" +
           `Username: ${detailsUser.username}` +
           "\n\n" +
-          "If you did not make these changes please conact admin@slapp.longrunner.co.uk",
+          "If you did not make these changes please conact admin@longrunner.co.uk",
         detailsUser.email,
       );
 
@@ -269,7 +256,7 @@ module.exports.detailsPost = async (req, res) => {
             "\n\n" +
             `Username: ${detailsUser.username}` +
             "\n\n" +
-            "If you did not make these changes please conact admin@slapp.longrunner.co.uk",
+            "If you did not make these changes please conact admin@longrunner.co.uk",
           updatedUser.email,
         );
       }
@@ -316,22 +303,29 @@ module.exports.delete = async (req, res) => {
 
   if (req.user.username != "defaultMeals" && req.user.username != "anonymous") {
     if (auth.user !== false) {
+      const userEmail = req.user.email; // Store email before deletion
+
       await Ingredient.deleteMany({ author: req.user._id });
       await Category.deleteMany({ author: req.user._id });
       await Meal.deleteMany({ author: req.user._id });
       await ShoppingList.deleteMany({ author: req.user._id });
       await User.findByIdAndDelete(req.user._id);
 
-      req.flash(
-        "success",
-        `Succesfully deleted Account for '${req.user.email}'`,
-      );
+      req.flash("success", `Succesfully deleted Account for '${userEmail}'`);
 
       mail(
         "Account deleted on slapp.longrunner.co.uk",
         "Hello,\n\n" + "This is confirm that your account has been deleted",
-        req.user.email,
+        userEmail,
       );
+
+      // Clear the session after successful deletion
+      req.session.destroy((err) => {
+        if (err) {
+          console.error("Session destroy error:", err);
+        }
+      });
+
       res.redirect("/");
     } else {
       req.flash("error", "Incorrect password, please try again");

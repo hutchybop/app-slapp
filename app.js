@@ -16,10 +16,10 @@ const mongoSanitize = require("express-mongo-sanitize");
 const helmet = require("helmet");
 const compression = require("compression");
 const favicon = require("serve-favicon");
+const rateLimit = require("express-rate-limit");
 
-// Required for passport
-const passport = require("passport");
-const LocalStragtegy = require("passport-local");
+// Custom authentication
+const { authenticateUser, loginUser } = require("./utils/auth");
 
 // Required for recaptcha
 var Recaptcha = require("express-recaptcha").RecaptchaV2;
@@ -230,12 +230,42 @@ app.use(session(sessionConfig));
 app.use(flash());
 app.use(back());
 
-// Setting up passport. Required to be after session setup.
-app.use(passport.initialize());
-app.use(passport.session());
-passport.use(new LocalStragtegy(User.authenticate()));
-passport.serializeUser(User.serializeUser());
-passport.deserializeUser(User.deserializeUser());
+// Custom session serialization
+app.use((req, res, next) => {
+  if (req.session && req.session.userId) {
+    User.findById(req.session.userId)
+      .then((user) => {
+        if (!user) {
+          // User not found in database, clear session
+          delete req.session.userId;
+          req.user = null;
+        } else {
+          req.user = user;
+        }
+        next();
+      })
+      .catch((err) => next(err));
+  } else {
+    next();
+  }
+});
+
+// Rate limiting for authentication endpoints
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 10, // limit each IP to 10 requests per windowMs
+  message: "Too many authentication attempts, please try again later.",
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+const passwordResetLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000, // 1 hour
+  max: 5, // limit each IP to 5 password reset requests per hour
+  message: "Too many password reset attempts, please try again later.",
+  standardHeaders: true,
+  legacyHeaders: false,
+});
 
 // Compression to make website run quicker
 app.use(compression());
@@ -262,20 +292,34 @@ app.get("/policy/logs", catchAsync(policy.logs));
 
 // user routes
 app.get("/auth/register", users.register);
-app.post("/auth/register", validateRegister, catchAsync(users.registerPost));
+app.post(
+  "/auth/register",
+  authLimiter,
+  validateRegister,
+  catchAsync(users.registerPost),
+);
 app.get("/auth/login", users.login);
 app.post(
   "/auth/login",
+  authLimiter,
   validateLogin,
-  passport.authenticate("local", {
-    failureFlash: true,
-    failureRedirect: "/auth/login",
+  authenticateUser,
+  catchAsync(async (req, res) => {
+    await loginUser(req, req.user);
+    req.flash("success", "Welcome back!");
+    const redirectUrl = req.session.returnTo || "/";
+    delete req.session.returnTo;
+    res.redirect(redirectUrl);
   }),
-  catchAsync(users.loginPost),
 );
 app.get("/auth/logout", users.logout);
 app.get("/auth/forgot", users.forgot);
-app.post("/auth/forgot", validateForgot, catchAsync(users.forgotPost));
+app.post(
+  "/auth/forgot",
+  passwordResetLimiter,
+  validateForgot,
+  catchAsync(users.forgotPost),
+);
 app.get("/auth/reset/:token", users.reset);
 app.post("/auth/reset/:token", validateReset, catchAsync(users.resetPost));
 app.get("/auth/details", isLoggedIn, users.details);
@@ -379,6 +423,24 @@ app.post(
   validateCategory,
   catchAsync(categories.updateCustomise),
 );
+
+if (process.env.NODE_ENV !== "production") {
+  // Debug session route (remove in production)
+  app.get("/debug/session", (req, res) => {
+    res.json({
+      sessionId: req.sessionID,
+      userId: req.session.userId,
+      user: req.user
+        ? {
+            id: req.user._id,
+            username: req.user.username,
+            email: req.user.email,
+          }
+        : null,
+      session: req.session,
+    });
+  });
+}
 
 // Site-Map route
 app.get("/sitemap.xml", (req, res) => {
