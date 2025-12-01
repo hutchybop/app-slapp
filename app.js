@@ -68,19 +68,9 @@ if (process.env.NODE_ENV === "production") {
 }
 
 // Setting up mongoose
-const dbName = "slapp";
-let dbUrl;
-// if (process.env.NODE_ENV !== "production") {
-//     dbUrl = "mongodb://127.0.0.1:27017/" + dbName; // For local db (will not work in production)
-// }else{
-//     dbUrl = "mongodb+srv://hutch:" + process.env.MONGODB + "@hutchybop.kpiymrr.mongodb.net/" + dbName + "?retryWrites=true&w=majority&appName=hutchyBop" // For Atlas (Cloud db)
-// }
-dbUrl =
-  "mongodb+srv://hutch:" +
-  process.env.MONGODB +
-  "@hutchybop.kpiymrr.mongodb.net/" +
-  dbName +
-  "?retryWrites=true&w=majority&appName=hutchyBop"; // For Atlas (Cloud db)
+const dbName = "slapp"
+let dbUrl
+dbUrl = "mongodb+srv://hutch:" + process.env.MONGODB + "@hutchybop.kpiymrr.mongodb.net/" + dbName + "?retryWrites=true&w=majority&appName=hutchyBop" // For Atlas (Cloud db)
 mongoose.connect(dbUrl);
 // Error Handling for the db connection
 const db = mongoose.connection;
