@@ -35,7 +35,6 @@ const ingredients = require("./controllers/ingredients");
 const shoppingLists = require("./controllers/shoppingLists");
 const categories = require("./controllers/categories");
 const catchAsync = require("./utils/catchAsync");
-const ExpressError = require("./utils/ExpressError");
 const logger = require("./utils/logger");
 const { errorHandler } = require("./utils/errorHandler");
 const User = require("./models/user");
@@ -387,10 +386,12 @@ app.get("/sitemap.xml", (req, res) => {
 });
 
 // Unknown (404) webpage error
-// Uses the ExpressError to pass message (Page Not Found) and statusCode (404)
-// to the error handler
-app.use((req, res, next) => {
-  next(new ExpressError("Page Not Found", 404));
+app.use((req, res) => {
+  res.status(404).render("policy/error", {
+    err: { message: "Page Not Found", statusCode: 404 },
+    title: "Error - Page Not Found",
+    page: "error",
+  });
 });
 
 // Error Handler, from utils.

@@ -369,6 +369,7 @@ module.exports.defaultPatch = async (req, res) => {
   await Meal.updateMany(
     { author: req.user._id },
     { $set: { default: "unAssig" } },
+    { updatePipeline: true },
   );
 
   // Removing the 'unAssig' default and adding the desired default to the relevant day
