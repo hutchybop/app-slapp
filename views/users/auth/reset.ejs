@@ -22,19 +22,23 @@
                             <div class="invalid-feedback">
                                 Please provide a new Password
                             </div>
-                          </div>
+                        </div>
 
-                          <div class="form-group">
-                            <label class="form-label for="confirm">Confirm Password</label>
-                            <input class="form-control" type="password" name="confirm" value="" placeholder="Confirm password" required/>
+                        <div class="form-group">
+                            <label class="form-label" for="confirm">Confirm Password</label>
+                            <input class="form-control" type="password" name="confirm_password" value="" placeholder="Confirm password" required/>
                             <div class="invalid-feedback">
                                 Please confirm Password
                             </div>
-                          </div>
+                            <div class="invalid-feedback" id="password-mismatch">
+                                Passwords do not match
+                            </div>
 
-                          <div class="form-group">
+                        </div>
+
+                        <div class="form-group">
                             <button type="submit" class="btn btn-primary">Update Password</button>
-                          </div>
+                        </div>
                     </form>
                 </div>
             </div>

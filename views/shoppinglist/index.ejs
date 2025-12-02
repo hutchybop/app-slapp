@@ -49,8 +49,8 @@
                                                 <a class='btn btn-outline-secondary btn-sm' href="/shoppinglist/edit/<%=i.id%>">Edit</a>
                                             </div>
                                             <div class="pr-2">
-                                                <form id="slIndexAlertDelete" action="/shoppinglist/<%=i.id%>?_method=DELETE" method='post'>
-                                                    <button form="slIndexAlertDelete" class='btn btn-outline-danger btn-sm' type="submit">Delete</button>
+                                                <form id="slIndexAlertDelete<%=i.id%>" action="/shoppinglist/<%=i.id%>?_method=DELETE" method='post'>
+                                                    <button form="slIndexAlertDelete<%=i.id%>" class='btn btn-outline-danger btn-sm' type="submit">Delete</button>
                                                 </form>
                                             </div>
                                         </div>

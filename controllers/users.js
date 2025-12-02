@@ -12,41 +12,48 @@ const { loginUser, logoutUser } = require("../utils/auth");
 module.exports.register = (req, res) => {
   res.render("users/auth/register", {
     title: "Register at slapp.longrunner.co.uk",
-    page: "authRegister",
+    page: "generic",
   });
 };
 
 // Register - User (POST)
 module.exports.registerPost = async (req, res) => {
   try {
-    if (req.body.tnc && req.body.tnc === "checked") {
-      const { email, username, password } = req.body;
-      const user = await new User({ username, email });
-      const registeredUser = await User.register(user, password);
-
-      await loginUser(req, registeredUser);
-
-      // Runs newUserSeed function to copy all the meals and ingredients from the default user to the new user
-      newUserSeed(req.user._id);
-
-      // Send email to me to alert that a new user has signed up
-      mail(
-        "New User Registered on slapp.longrunner.co.uk",
-        "Hello,\n\n" +
-          "A new User has registered! \n\n" +
-          "Username: " +
-          username +
-          "\n\n" +
-          "Email: " +
-          email,
-      );
-
-      req.flash("success", "You are logged in!");
-      res.redirect("/shoppinglist");
-    } else {
+    // Check if T&Cs are accepted
+    if (!req.body.tnc || req.body.tnc !== "checked") {
       req.flash("error", "You must accept the terms and conditions.");
-      res.redirect("/auth/register");
+      return res.redirect("/auth/register");
     }
+
+    // Check if passwords match
+    if (req.body.password !== req.body.confirm_password) {
+      req.flash("error", "Passwords do not match.");
+      return res.redirect("/auth/register");
+    }
+
+    const { email, username, password } = req.body;
+    const user = await new User({ username, email });
+    const registeredUser = await User.register(user, password);
+
+    await loginUser(req, registeredUser);
+
+    // Runs newUserSeed function to copy all the meals and ingredients from the default user to the new user
+    newUserSeed(req.user._id);
+
+    // Send email to me to alert that a new user has signed up
+    mail(
+      "New User Registered on slapp.longrunner.co.uk",
+      "Hello,\n\n" +
+        "A new User has registered! \n\n" +
+        "Username: " +
+        username +
+        "\n\n" +
+        "Email: " +
+        email,
+    );
+
+    req.flash("success", "You are logged in!");
+    res.redirect("/shoppinglist");
   } catch (err) {
     req.flash("error", err.message);
     res.redirect("/auth/register");
@@ -156,16 +163,18 @@ module.exports.resetPost = async (req, res) => {
       req.flash("error", "Password reset token is invalid or has expired.");
       return res.redirect("/auth/forgot");
     }
-    if (req.body.password === req.body.confirm) {
-      await foundUser.setPassword(req.body.password);
-      foundUser.resetPasswordToken = undefined;
-      foundUser.resetPasswordExpires = undefined;
-      await foundUser.save();
-      await loginUser(req, foundUser);
-    } else {
+
+    // Check if passwords match
+    if (req.body.password !== req.body.confirm_password) {
       req.flash("error", "Passwords do not match.");
       return res.redirect("");
     }
+
+    await foundUser.setPassword(req.body.password);
+    foundUser.resetPasswordToken = undefined;
+    foundUser.resetPasswordExpires = undefined;
+    await foundUser.save();
+    await loginUser(req, foundUser);
 
     mail(
       "Your password has been changed for slapp.longrunner.co.uk",
@@ -282,7 +291,7 @@ module.exports.detailsPost = async (req, res) => {
 
 // Delete account (GET)
 module.exports.deletePre = (req, res) => {
-  if (req.user.username != "defaultMeals" && req.user.username != "anonymous") {
+  if (req.user.username != "defaultMeals") {
     let user = req.user;
 
     res.render("users/auth/deletepre", {
@@ -301,7 +310,7 @@ module.exports.delete = async (req, res) => {
   // Checks if the password for the current user is correct
   const auth = await req.user.authenticate(req.body.password);
 
-  if (req.user.username != "defaultMeals" && req.user.username != "anonymous") {
+  if (req.user.username != "defaultMeals") {
     if (auth.user !== false) {
       const userEmail = req.user.email; // Store email before deletion
 
@@ -310,8 +319,6 @@ module.exports.delete = async (req, res) => {
       await Meal.deleteMany({ author: req.user._id });
       await ShoppingList.deleteMany({ author: req.user._id });
       await User.findByIdAndDelete(req.user._id);
-
-      req.flash("success", `Succesfully deleted Account for '${userEmail}'`);
 
       mail(
         "Account deleted on slapp.longrunner.co.uk",
@@ -325,8 +332,10 @@ module.exports.delete = async (req, res) => {
           console.error("Session destroy error:", err);
         }
       });
-
-      res.redirect("/");
+      const message = encodeURIComponent(
+        `Succesfully deleted Account for '${userEmail}'`,
+      );
+      res.redirect(`/?success=${message}`);
     } else {
       req.flash("error", "Incorrect password, please try again");
       res.redirect("/auth/deletepre");

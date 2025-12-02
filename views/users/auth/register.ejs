@@ -34,7 +34,6 @@
         </div>
         <div class="col-lg-6 mt-5">
             <div class="card shadow">
-                <img src="../images/register.jpeg" alt="" class="card-img-top" />
                 <div class="card-body">
                     <div class="d-flex">
                         <div class="mr-auto">
@@ -43,12 +42,6 @@
                         <div>
                             <a class='btn btn-primary btn-sm' href="/auth/login">Login</a>
                         </div>
-                    </div>
-                    <div id="regAlert" class="regAlert alert alert-dismissible fade show">
-                        <span id='regMsg'></span>
-                        <button type="button" class="close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
                     </div>
                     <form id="reg" action="/auth/register" method="POST" class="validated-form" novalidate>
                         <div class="form-group">
@@ -75,10 +68,26 @@
                             </div>
                         </div>
 
-                        <div class="form-check">
-                            <input type="checkbox" name="tnc" id="tncCheck" value="checked">
-                            <label class="form-check-label" for="tncCheck">Accept <a href="/policy/tandc#tnc">Terms and
-                                    Condtions</a> </label>
+                        <div class="form-group">
+                            <label class="form-label" for="confirm_password">Confirm Password</label>
+                            <input class="form-control" type="password" name="confirm_password" id="confirm_password" value="" placeholder="Confirm password" required/>
+                            <div class="invalid-feedback">
+                                Please confirm Password
+                            </div>
+                            <div class="invalid-feedback" id="password-mismatch">
+                                Passwords do not match
+                            </div>
+
+                        </div>
+
+                        <div class="form-check mb-3 pl-0">
+                            <input type="checkbox" name="tnc" id="tncCheck" value="checked" required>
+                            <label class="form-check-label" for="tncCheck">
+                                Accept<a href="/policy/tandc#tnc">Terms andCondtions</a> 
+                            </label>
+                            <div class="invalid-feedback">
+                                You must accept the Terms and Conditions
+                            </div>
                         </div>
 
                         <button class="btn btn-success btn-block">Register</button>

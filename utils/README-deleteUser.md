@@ -21,7 +21,7 @@ node utils/deleteUser.js
 
 - ✅ **Password authentication** required before deletion
 - ✅ **Double confirmation** prevents accidental deletion
-- ✅ **Protected accounts** (defaultMeals, anonymous) cannot be deleted
+- ✅ **Protected accounts** (defaultMeals) cannot be deleted
 - ✅ **Complete cleanup** removes all associated data
 - ✅ **Email notification** sent to user
 - ✅ **Database connection** properly closed

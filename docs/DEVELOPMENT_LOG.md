@@ -1,5 +1,30 @@
 # DEVELOPMENT_LOG.md
 
+## Session 34
+
+### Monday December 1st
+
+<br>
+
+**Summary:** This session focused on major authentication system migration from passport-local-mongoose to a custom bcrypt-based authentication system. The changes included comprehensive updates to user models, authentication utilities, and controller logic to improve security and maintainability.
+
+**Git Branch:** main <br>
+**Git commits:** <br>
+82b89a01b0ecfe8975ab33aebb3b5ff57d663e99, 65e8bb2, 5f191f3, e24aa97, e1f4ddaeea017f0f84977533f65d9d662eb11086, eac202e3c118a9a12fdc0494e03e50f991eb2208
+
+**Session git history:**
+
+- update passport to bcrypt - _Migrated from passport-local-mongoose to custom bcrypt authentication system_
+- commit before passport 9 upgrade - _Created checkpoint before passport version 9 upgrade_
+- Before connect-mongo v6.0.0 upgrade - _Created checkpoint before connect-mongo version 6 upgrade_
+- Before mongoose v9 upgrade - _Created checkpoint before mongoose version 9 upgrade_
+- update app.js - _Updated main application configuration file_
+- update nmongodb setup - _Improved MongoDB database connection setup_
+
+---
+
+<br>
+
 ## Session 33
 
 ### Sunday December 1st

@@ -33,6 +33,7 @@ module.exports.registerSchema = Joi.object({
   username: Joi.string().required().escapeHTML(),
   email: Joi.string().email().required(),
   password: Joi.string().required().escapeHTML(),
+  confirm_password: Joi.string().required().escapeHTML(),
   tnc: Joi.string().valid("checked").optional(),
 }).required();
 
@@ -58,7 +59,7 @@ module.exports.deleteSchema = Joi.object({
 
 module.exports.resetSchema = Joi.object({
   password: Joi.string().required().escapeHTML(),
-  confirm: Joi.string().required().escapeHTML(),
+  confirm_password: Joi.string().required().escapeHTML(),
 }).required();
 
 module.exports.ingredientSchema = Joi.object({

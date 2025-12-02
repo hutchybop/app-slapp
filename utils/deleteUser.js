@@ -61,7 +61,7 @@ async function deleteUserAccount() {
     console.log(`   ID: ${user._id}`);
 
     // Check for protected accounts
-    if (user.username === "defaultMeals" || user.username === "anonymous") {
+    if (user.username === "defaultMeals") {
       console.log(`\n❌ Cannot delete protected account: ${user.username}`);
       rl.close();
       return;
