@@ -1,5 +1,25 @@
 # DEVELOPMENT_LOG.md
 
+## Session 35
+
+### Tuesday December 2nd
+
+<br>
+
+**Summary:** This session focused on enhancing browser and server-side validation systems across the application. The changes included improved form validation logic, updated user authentication flows, and enhanced security measures for user inputs.
+
+**Git Branch:** main <br>
+**Git commits:** <br>
+d3c83b97bda4966ea0be0bacfe7caf6e4e7d23ea
+
+**Session git history:**
+
+- update browser/server side validations - *Enhanced validation systems for improved security and user experience*
+
+---
+
+<br>
+
 ## Session 34
 
 ### Monday December 1st

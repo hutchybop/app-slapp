@@ -25,14 +25,15 @@
 ### Technology Stack
 
 - **Backend**: Node.js, Express.js 5.1.0
-- **Database**: MongoDB with Mongoose ODM
-- **Authentication**: Custom bcrypt-based authentication with passport migration support
+- **Database**: MongoDB with Mongoose ODM 9.0.0 (MongoDB Atlas cloud hosting)
+- **Authentication**: Custom bcrypt-based authentication with passport-local-mongoose migration support
 - **Templating**: EJS with ejs-mate for layouts
-- **Security**: Helmet, express-mongo-sanitize, express-rate-limit
-- **Session Management**: express-session with MongoDB store
-- **Validation**: Joi with HTML sanitization
-- **Email**: Nodemailer for notifications
+- **Security**: Helmet 8.1.0, express-mongo-sanitize, express-rate-limit 8.2.1
+- **Session Management**: express-session with connect-mongo store
+- **Validation**: Joi 18.0.1 with sanitize-html 2.17.0 for HTML sanitization
+- **Email**: Nodemailer 7.0.9 for notifications
 - **Frontend**: Vanilla JavaScript, Bootstrap CSS
+- **Additional**: Compression middleware, method-override, express-back, reCAPTCHA integration
 
 ## Architecture Flow
 
@@ -62,16 +63,16 @@ graph TB
 ### Detailed Request Flow
 
 1. **Incoming Request** → Express.js receives HTTP request
-2. **Security Layer** → Helmet CSP configuration, compression, favicon handling
-3. **Rate Limiting** → Authentication endpoints protected with rate limits
-4. **Session Management** → MongoDB-backed session store with secure cookies
-5. **Request Logging** → Custom logger middleware tracks all requests
+2. **Security Layer** → Helmet CSP configuration (environment-specific), compression, favicon handling
+3. **Rate Limiting** → Authentication endpoints protected (15min/10 attempts for auth, 1hr/5 attempts for password reset)
+4. **Session Management** → MongoDB-backed session store with secure cookies (14-day expiry, httpOnly, SameSite: strict)
+5. **Request Logging** → Custom logger middleware tracks all requests with geographic data
 6. **Route Matching** → Express router matches URL pattern
-7. **Authentication Check** → Custom auth middleware verifies user session
-8. **Input Validation** → Joi schemas validate and sanitize all inputs
-9. **Authorization** → Resource ownership verification (isAuthor\* middleware)
-10. **Controller Execution** → Business logic wrapped in catchAsync
-11. **Database Operations** → Mongoose ODM with proper error handling
+7. **Authentication Check** → Custom auth middleware verifies user session with userId validation
+8. **Input Validation** → Joi schemas validate and sanitize all inputs (HTML tag removal)
+9. **Authorization** → Resource ownership verification (isAuthor\* middleware with deep population)
+10. **Controller Execution** → Business logic wrapped in catchAsync for consistent error handling
+11. **Database Operations** → Mongoose ODM with proper error handling and population strategies
 12. **View Rendering** → EJS templates with flash messages and user context
 13. **Response** → HTML/JSON response with proper headers
 14. **Error Handling** → Centralized error handler for consistent error responses
@@ -84,11 +85,33 @@ graph LR
     B --> C[Mongo Sanitization]
     C --> D[Rate Limiting]
     D --> E[Session Validation]
-    E --> F[CSRF Protection]
-    F --> G[Input Validation]
-    G --> H[Authorization]
-    H --> I[Resource Access]
+    E --> F[Input Validation]
+    F --> G[Authorization]
+    G --> H[Resource Access]
 ```
+
+### Security Configuration Details
+
+#### Helmet CSP Configuration
+- **Production**: Strict CSP with allowed domains for Bootstrap, jQuery, Google Fonts, reCAPTCHA
+- **Development**: Relaxed CSP with wildcard allowances for easier debugging
+- **Features**: Content Security Policy, Cross-Origin Opener Policy, Origin Agent Cluster
+
+#### Session Security
+- **Cookie Name**: "slapp"
+- **Duration**: 14 days (1000 * 60 * 60 * 24 * 7 * 2 milliseconds)
+- **Security Flags**: httpOnly, SameSite: strict, secure (production only)
+- **Storage**: MongoDB via connect-mongo for persistence across server restarts
+
+#### Rate Limiting Configuration
+- **Authentication Endpoints**: 10 requests per 15 minutes per IP
+- **Password Reset**: 5 requests per hour per IP
+- **Features**: Standard headers enabled, legacy headers disabled
+
+#### Input Sanitization
+- **MongoDB Injection Protection**: express-mongo-sanitize with underscore replacement
+- **XSS Protection**: Custom Joi extension with sanitize-html (no allowed tags)
+- **HTML Escaping**: All string inputs validated for HTML tag removal
 
 ## File/Module Inventory
 
@@ -115,12 +138,15 @@ graph LR
 - **Schema Fields**:
   - username, email (unique, required)
   - password (bcrypt hash, select: false for security)
-  - hash, salt (legacy passport fields for migration)
+  - hash, salt (legacy passport fields for migration, select: false)
   - resetPasswordToken, resetPasswordExpires
 - **Special Features**:
-  - Password migration from passport-local-mongoose to bcrypt
-  - Custom authentication method supporting both formats
-  - Automatic migration with progress tracking
+  - Password migration from passport-local-mongoose to bcrypt with PBKDF2 verification
+  - Custom authentication method supporting both legacy and bcrypt formats
+  - Automatic migration with transaction safety and progress email notifications
+  - Static register() method for new user creation
+  - Instance authenticate() and setPassword() methods
+- **Migration Logic**: Detects passport-local-mongoose hashes (1024-char hex + 64-char hex salt) and converts to bcrypt on successful login
 
 #### `models/meal.js` - Meal Definition Model
 
@@ -128,11 +154,12 @@ graph LR
 - **Key Exports**: Meal model, mealType enum, defaults array
 - **Schema Fields**:
   - mealName, mealRecipe, mealType (enum: Breakfast, Lunch, Main, Constant Weekly Items, Nonfood Items, Archive)
-  - weeklyItems (array of ingredients with quantities and ObjectId references)
-  - replaceOnUse (consumable ingredients with quantities)
-  - default (weekly schedule assignments: friday, saturday, sunday, monday, etc.)
+  - weeklyItems (array of {qty, weeklyIngredients: ObjectId ref to Ingredient})
+  - replaceOnUse (array of {qty, replaceOnUseIngredients: ObjectId ref to Ingredient})
+  - default (array of weekly schedule assignments: friday, saturday, sunday, monday, tuesday, wednesday, thursday, lunchWeekday, lunchWeekend, breakfast, none, unAssig)
   - author (user ownership reference)
-- **Relationships**: References Ingredient model via ObjectId
+- **Relationships**: References Ingredient model via ObjectId with population support
+- **Enums**: mealType (6 types), defaults (12 schedule options)
 
 #### `models/ingredient.js` - Ingredient Management Model
 
@@ -146,38 +173,43 @@ graph LR
 - **Purpose**: Weekly shopping list generation and management
 - **Key Exports**: ShoppingList model
 - **Schema Fields**:
-  - name (required), timestamps
+  - name (required), timestamps (automatic createdAt, updatedAt)
   - Daily meal assignments (friday, saturday, sunday, monday, tuesday, wednesday, thursday)
   - Special meals: lunchWeekday, lunchWeekend, breakfast
-  - items array (dynamic), editVer object (version tracking)
+  - items array (dynamic storage for generated shopping list items)
+  - editVer object (version tracking for collaborative editing)
   - author (user ownership reference)
-- **Relationships**: All meal fields reference Meal model via ObjectId
+- **Relationships**: All meal fields reference Meal model via ObjectId for population
+- **Features**: Automatic timestamp tracking, version control support
 
 #### `models/category.js` - Category Customization Model
 
 - **Purpose**: User-specific shopping categories
 - **Key Exports**: Category model
 - **Schema Fields**: catList (array of category names), author (user reference)
-- **Default Categories**: Toiletries, Veg 1-4, Meat And dairy, Beans And Spices, Middle store, Milk And bread, Frozen, Non food
+- **Default Categories**: Toiletries, Veg 1, Veg 2, Veg 3, Veg 4, Meat And dairy, Beans And Spices, Middle store, Milk And bread, Frozen, Non food
+- **Usage**: Referenced by shopping list generation for ingredient organization
 
 #### `models/schemas.js` - Validation Schemas
 
 - **Purpose**: Joi validation schemas for all user inputs with HTML sanitization
 - **Key Exports**: Validation schemas for all forms
 - **Features**:
-  - Custom HTML escape extension using sanitize-html
-  - Comprehensive validation for all user inputs
-  - Environment-specific error messages
-- **Schemas Included**: registerSchema, loginSchema, mealSchema, ingredientSchema, shoppingListMealsSchema, etc.
+  - Custom HTML escape extension using sanitize-html (no allowed tags/attributes)
+  - Comprehensive validation for all user inputs with environment-specific error handling
+  - Extended Joi with string.escapeHTML() method for XSS prevention
+- **Schemas Included**: registerSchema, loginSchema, mealSchema, ingredientSchema, shoppingListMealsSchema, shoppingListIngredientsSchema, defaultSchema, categorySchema, tandcSchema, forgotSchema, resetSchema, detailsSchema, deleteSchema
+- **Security**: All string inputs automatically sanitized for HTML tags
 
 #### `models/Log.js` - System Logging Model
 
-- **Purpose**: Request tracking and user activity monitoring
+- **Purpose**: Request tracking and user activity monitoring with geographic data
 - **Key Exports**: Log model
 - **Schema Fields**:
-  - ip (required, unique), country, city
+  - ip (required, unique), country, city (from micro-geoip-lite)
   - timesVisited, lastVisitDate, lastVisitTime
-  - routes (Map of route visit counts)
+  - routes (Map of route visit counts for analytics)
+- **Integration**: Used by utils/logger.js for comprehensive request tracking
 
 ### Controllers Layer (`controllers/`)
 
@@ -249,10 +281,12 @@ graph LR
 
 - **Purpose**: Authentication, authorization, and validation middleware
 - **Key Functions**:
-  - Validation functions for all forms (validateRegister, validateMeal, etc.)
+  - Validation functions for all forms (validateRegister, validateMeal, validateIngredient, etc.)
   - Authorization checks (isLoggedIn, isAuthorMeal, isAuthorIngredient, isAuthorShoppingList)
   - JoiFlashError for user-friendly error messages with environment-specific handling
 - **Features**: HTML sanitization, custom validation rules, flash message integration
+- **Security**: Session validation with userId matching, resource ownership verification
+- **Population**: Author middleware includes deep population for complex relationships (weeklyItems.weeklyIngredients, replaceOnUse.replaceOnUseIngredients)
 
 #### `utils/catchAsync.js` - Async Error Wrapper
 
@@ -277,9 +311,11 @@ graph LR
 - **Purpose**: Custom authentication replacing passport-local-mongoose
 - **Key Functions**: authenticateUser, loginUser, logoutUser
 - **Features**:
-  - Session management with regeneration for security
+  - Session management with regeneration for security (prevents session fixation)
   - Support for password migration from legacy system
-  - Custom error handling and flash messages
+  - Custom error handling with environment-specific messages
+  - Promise-based API for async/await compatibility
+- **Security**: Session regeneration on login, complete session destruction on logout
 
 #### `utils/passwordUtils.js` - Password Management
 
@@ -290,12 +326,13 @@ graph LR
 #### `utils/newUserSeed.js` - User Data Seeding
 
 - **Purpose**: Initialize new users with default meals and ingredients
-- **Key Functions**: newUserSeed - copies from default user template
+- **Key Functions**: newUserSeed - copies from DEFAULT_USER_ID template
 - **Features**:
-  - Category initialization with default categories
-  - Meal copying with proper ingredient reference mapping
+  - Category initialization with 11 default categories
+  - Meal copying with proper ingredient reference mapping (ObjectId translation)
   - Ingredient duplication with user ownership
-  - Population of complex meal relationships
+  - Complex population handling for weeklyItems and replaceOnUse arrays
+- **Process**: Creates categories → copies ingredients → copies meals with ingredient mapping → populates complex relationships
 
 #### `utils/mail.js` - Email Service
 
@@ -304,17 +341,19 @@ graph LR
 - **Features**:
   - New user registration notifications
   - Password reset functionality
-  - System migration progress updates
+  - System migration progress updates (automatic during password migration)
+- **Configuration**: Uses environment variables for email service settings
 
 #### `utils/logger.js` - Request Logging
 
 - **Purpose**: HTTP request logging for monitoring and analytics
 - **Key Functions**: Request logging middleware with IP tracking
 - **Features**:
-  - IP-based visitor tracking
-  - Route visit counting
-  - Geographic location logging
-  - Visit frequency analysis
+  - IP-based visitor tracking with micro-geoip-lite integration
+  - Route visit counting with Map data structure
+  - Geographic location logging (country, city)
+  - Visit frequency analysis with timestamp tracking
+- **Storage**: Updates Log model with comprehensive visit analytics
 
 #### `utils/toUpperCase.js` - String Utility
 
@@ -578,12 +617,50 @@ utils/logger.js
 
 ### Entry Points
 
-- **Primary**: `app.js` - Express application setup and configuration
-- **Database**: MongoDB Atlas connection via Mongoose
+- **Primary**: `app.js` - Express application setup and configuration (port 3001)
+- **Database**: MongoDB Atlas connection via Mongoose (slapp database)
 - **Authentication**: Custom bcrypt-based system with passport migration
 - **Templates**: EJS rendering engine with ejs-mate layouts
-- **Session**: MongoDB-backed session store
-- **Security**: Helmet CSP configuration with rate limiting
+- **Session**: MongoDB-backed session store with 14-day cookie expiry
+- **Security**: Helmet CSP configuration with environment-specific settings and rate limiting
+
+### Route Configuration
+
+#### Authentication Routes
+- `GET/POST /auth/register` - User registration with rate limiting
+- `GET/POST /auth/login` - User login with rate limiting and authentication
+- `GET /auth/logout` - User logout
+- `GET/POST /auth/forgot` - Password reset with rate limiting
+- `GET/POST /auth/reset/:token` - Password reset confirmation
+- `GET/POST /auth/details` - User account details
+- `GET/DELETE /auth/deletepre` - Account deletion
+
+#### Meal Management Routes
+- `GET /meals` - Index user meals
+- `GET/POST /meals` - Create new meal
+- `GET /meals/:id` - Show meal details
+- `GET/PUT /meals/:id/edit` - Edit meal
+- `DELETE /meals/:id` - Delete meal
+
+#### Shopping List Routes
+- `GET /` - Landing page (redirects based on auth status)
+- `GET /shoppinglist` - Index shopping lists
+- `GET/POST /shoppinglist` - Create new shopping list with meals
+- `GET /shoppinglist/new` - Select meals for new list
+- `GET/PATCH /shoppinglist/default` - Manage default meal assignments
+- `GET/PUT /shoppinglist/:id/edit` - Edit shopping list ingredients
+- `GET/DELETE /shoppinglist/:id` - Show/delete shopping list
+
+#### Ingredient & Category Routes
+- `GET /ingredients` - Index ingredients
+- `GET/PUT /ingredients/:id/edit` - Edit ingredient
+- `DELETE /ingredients/:id` - Delete ingredient
+- `GET/POST /category/customise` - Customize categories
+
+#### Policy Routes
+- `GET /policy/cookie-policy` - Cookie policy
+- `GET/POST /policy/tandc` - Terms and conditions with reCAPTCHA
+- `GET /policy/logs` - System logs (admin access)
 
 ### Circular Dependencies
 
@@ -595,6 +672,28 @@ utils/logger.js
 - **Data Seeding**: controllers/users.js → utils/newUserSeed.js → all models
 - **Validation Chain**: utils/middleware.js → models/schemas.js → controllers
 - **Error Handling**: utils/catchAsync.js → utils/errorHandler.js → views/policy/error.ejs
+
+### Middleware Chains by Route Type
+
+#### Authentication Routes
+- **Registration**: authLimiter → validateRegister → catchAsync
+- **Login**: authLimiter → validateLogin → authenticateUser → catchAsync
+- **Password Reset**: passwordResetLimiter → validateForgot/validateReset → catchAsync
+
+#### Protected Routes (Meals, Shopping Lists, Ingredients)
+- **Read Operations**: isLoggedIn → catchAsync
+- **Write Operations**: isLoggedIn → validate* → isAuthor* → catchAsync
+- **Edit Operations**: isLoggedIn → isAuthor* → validate* → catchAsync
+
+#### Public Routes
+- **Landing**: catchAsync (no authentication required)
+- **Policy Pages**: catchAsync (public access)
+- **Static Assets**: express.static (no middleware)
+
+#### Session Management
+- **Custom Session Middleware**: User lookup by session.userId → req.user population
+- **Flash Messages**: res.locals population for all templates
+- **Security Headers**: Environment-specific Helmet configuration
 
 ## Data Flow
 
@@ -892,4 +991,29 @@ sequenceDiagram
 4. **Data Encryption**: Implement field-level encryption for sensitive data
 5. **Security Headers**: Extend Helmet configuration for new security requirements
 
-This architecture provides a solid foundation for extending the shopping list application with new features while maintaining clean separation of concerns, consistent patterns, and robust security practices throughout the codebase. The modular design allows for independent development and testing of components while ensuring proper integration through well-defined interfaces and middleware chains.
+### Development and Debugging Features
+
+#### Development-Only Routes
+- **Debug Session**: `GET /debug/session` - Displays session information, user data, and session contents
+- **Environment Variables**: `.env` file support for local configuration
+- **Enhanced Error Messages**: Detailed error information in development mode
+
+#### Development Tools Configuration
+- **ESLint**: Code quality and consistency checking
+- **Prettier**: Code formatting (configured via ESLint plugin)
+- **NPM Scripts**: `npm run lint`, `npm run lint:fix`
+- **Environment Detection**: `NODE_ENV !== "production"` for development-specific features
+
+#### Database Connection
+- **MongoDB Atlas**: Cloud-hosted MongoDB with retry writes and majority concern
+- **Connection String**: Configured via environment variables for security
+- **Error Handling**: Comprehensive database connection error logging
+
+#### Security in Development
+- **Relaxed CSP**: Wildcard allowances for external resources
+- **Disabled Security Features**: Frameguard, HSTS, MIME sniffing disabled for easier debugging
+- **Enhanced Logging**: Detailed error messages and stack traces
+
+---
+
+This architecture provides a solid foundation for extending the shopping list application with new features while maintaining clean separation of concerns, consistent patterns, and robust security practices throughout the codebase. The modular design allows for independent development and testing of components while ensuring proper integration through well-defined interfaces and middleware chains. The comprehensive security configuration, detailed logging, and development tooling support both production reliability and developer productivity.

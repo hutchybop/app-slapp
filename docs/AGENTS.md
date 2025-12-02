@@ -1,49 +1,30 @@
 # AGENTS.md
 
 ## Commands
-
 - **Lint**: `npm run lint` (ESLint with Prettier)
 - **Lint fix**: `npm run lint:fix`
-- **Test**: No test framework configured (echoes error)
 - **Start**: `node app.js` (runs on port 3001)
+- **Test**: No test framework configured
 
 ## Code Style Guidelines
 
 ### Import Organization
-
 - External imports first (express, mongoose, etc.)
 - Local imports second (controllers, models, utils)
 - Use CommonJS require() syntax throughout
 
-### Formatting & Linting
-
-- ESLint with Prettier integration
-- ES2021, CommonJS for server files, script sourceType for public JS
-- No semicolons required (Prettier handles)
-
-### Naming Conventions
-
-- Controllers: camelCase functions (index, new, create, etc.)
+### Formatting & Naming
+- ESLint + Prettier, ES2021, CommonJS for server files
+- Controllers: camelCase functions (index, new, create)
 - Models: PascalCase schemas (MealSchema, UserSchema)
-- Variables: camelCase
-- Constants: UPPER_SNAKE_CASE for enums/arrays
+- Variables: camelCase, Constants: UPPER_SNAKE_CASE
 
 ### Error Handling
-
 - Use catchAsync wrapper for async route handlers
 - Custom ExpressError class with message and statusCode
-- Centralized error handler in utils/errorHandler.js
+- Joi validation with flash errors via JoiFlashError
 
-### Database Patterns
-
-- Mongoose ODM with Schema definitions
-- Author field for user ownership
-- Population for related documents
+### Database & Security
+- Mongoose ODM with author field for ownership
 - Enum validation for constrained fields
-
-### Security
-
-- MongoDB sanitization middleware
-- Helmet for security headers
-- Passport.js for authentication
-- Session management with MongoStore
+- MongoDB sanitization middleware, Helmet security headers
