@@ -21,7 +21,11 @@ module.exports.index = async (req, res) => {
   items.sort((a, b) => a.mealName.localeCompare(b.mealName));
   items.sort((a, b) => b.mealType.localeCompare(a.mealType));
 
-  res.render("meals/index", { items, title: "All Meals", page: "mealsIndex" });
+  res.render("meals/index", {
+    items,
+    title: "All Meals",
+    css_page: "mealsIndex",
+  });
 };
 
 // NEW - meals (GET)
@@ -55,7 +59,8 @@ module.exports.new = async (req, res) => {
     mealNames,
     mealType,
     title: "Create A New Meal",
-    page: "mealsNewEdit",
+    css_page: "mealsNewEdit",
+    js_page: "mealsNewEdit",
   });
 };
 
@@ -230,7 +235,12 @@ module.exports.show = async (req, res) => {
     })
     .populate("author");
 
-  res.render("meals/show", { meal, title: meal.mealName, page: "mealsShow" });
+  res.render("meals/show", {
+    meal,
+    title: meal.mealName,
+    css_page: "mealsShow",
+    js_page: "mealsShow",
+  });
 };
 
 // EDIT - meals (GET)
@@ -280,7 +290,8 @@ module.exports.edit = async (req, res) => {
       items,
       mealNames,
       title: `Edit ${meal.mealName}`,
-      page: "mealsNewEdit",
+      css_page: "mealsNewEdit",
+      js_page: "mealsNewEdit",
     });
   } catch (err) {
     req.flash("error", `${err}`);

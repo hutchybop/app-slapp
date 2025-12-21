@@ -12,7 +12,8 @@ const { loginUser, logoutUser } = require("../utils/auth");
 module.exports.register = (req, res) => {
   res.render("users/auth/register", {
     title: "Register at slapp.longrunner.co.uk",
-    page: "generic",
+    css_page: "authRegister",
+    js_page: "authRegister",
   });
 };
 
@@ -64,7 +65,6 @@ module.exports.registerPost = async (req, res) => {
 module.exports.login = (req, res) => {
   res.render("users/auth/login", {
     title: "Login to slapp.longrunner.co.uk",
-    page: "generic",
   });
 };
 
@@ -89,7 +89,7 @@ module.exports.logout = async (req, res) => {
 
 // Forgot - user (GET)
 module.exports.forgot = (req, res) => {
-  res.render("users/auth/forgot", { title: "Password Reset", page: "generic" });
+  res.render("users/auth/forgot", { title: "Password Reset" });
 };
 
 // Forgot - user (POST)
@@ -150,7 +150,6 @@ module.exports.reset = async (req, res) => {
   res.render("users/auth/reset", {
     token: req.params.token,
     title: "Reset Your Password",
-    page: "generic",
   });
 };
 
@@ -210,7 +209,6 @@ module.exports.details = (req, res) => {
     username,
     email,
     title: "Reset Your Email Adrress",
-    page: "generic",
   });
 };
 
@@ -305,7 +303,6 @@ module.exports.deletePre = (req, res) => {
     res.render("users/auth/deletepre", {
       user,
       title: "Confirm DELETE account",
-      page: "generic",
     });
   } else {
     req.flash("error", req.user.username + " cannot be deleted here");

@@ -12,6 +12,7 @@ module.exports.blockedIPs = async (req, res) => {
   res.render("admin/blockedIPs", {
     title: "Blocked IPs - Admin",
     blockedIPs,
+    currentPath: req.originalUrl,
   });
 };
 
@@ -176,5 +177,6 @@ module.exports.tracker = async (req, res) => {
       limit,
     },
     blockedIPs,
+    currentPath: req.originalUrl,
   });
 };

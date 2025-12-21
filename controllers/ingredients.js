@@ -18,7 +18,8 @@ module.exports.index = async (req, res) => {
     ingredients,
     catArray,
     title: "All Ingredients",
-    page: "ingredientsIndex",
+    css_page: "IngredientsIndex",
+    js_page: "IngredientsIndex",
   });
 };
 
@@ -35,7 +36,7 @@ module.exports.edit = async (req, res) => {
     ingredient,
     catArray,
     title: `Edit ${ingredient.name}`,
-    page: "ingredientEdit",
+    js_page: "ingredientEdit",
   });
 };
 

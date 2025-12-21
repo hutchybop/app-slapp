@@ -25,7 +25,7 @@ module.exports.indexCustomise = async (req, res) => {
 
   res.render("categories/indexCustomise", {
     catObj,
-    page: "categoryCustomise",
+    js_page: "categoryCustomise",
     title: "Customise Your Categories",
   });
 };

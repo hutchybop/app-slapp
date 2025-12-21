@@ -58,11 +58,13 @@
     />
 
     <!-- Personal CSS -->
+    <% if (typeof css_page !== 'undefined') { %>
     <link
       rel="stylesheet"
       type="text/css"
-      href="/stylesheets/<%= page %>.css"
+      href="/stylesheets/<%= css_page %>.css"
     />
+    <% } %>
     <link
       rel="stylesheet"
       type="text/css"
@@ -116,7 +118,9 @@
     <!-- Boilerplate script -->
     <script type="text/javascript" src="/javascripts/boilerplate.js "></script>
     <!-- Personal js -->
-    <script type="text/javascript" src="/javascripts/<%= page %>.js "></script>
+    <% if (typeof js_page !== 'undefined') { %>
+    <script type="text/javascript" src="/javascripts/<%= js_page %>.js "></script>
+    <% } %>
     <script type="text/javascript" src="/javascripts/validateForms.js"></script>
 
 

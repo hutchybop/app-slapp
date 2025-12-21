@@ -3,7 +3,11 @@
         <div class="d-flex justify-content-between">
             <span><a class="me-2" href="/policy/tandc">T&Cs</a></span>
             <span><a href="/policy/cookie-policy">Cookie Policy</a></span>
-            <span><a href="/policy/tandc#contactForm">Contact</a></span>
+            <% if(typeof currentUser !== 'undefined' && currentUser.role === 'admin') { %>
+                <span><a href="/admin/tracker">Admin</a></span>
+            <% } else { %>
+                <span><a href="/policy/tandc#contactForm">Contact</a></span>
+            <% } %>
         </div>
     </div>
 </header>

@@ -1,18 +1,25 @@
 .cardTitles {
-    font-size: 1.6em;
-    color: #1E3A8A; /* Navy Blue */
+  font-size: 1.6em;
+  color: #1e3a8a; /* Navy Blue */
 }
 .cardHeadings {
-    font-size: 1.2em;
-    color: #319795;
-    margin-bottom: 20px;
+  font-size: 1.2em;
+  color: #319795;
+  margin-bottom: 20px;
 }
 .cardSubHeadings {
-    font-size: 1.05em;
-    color: #2D3748;
-    white-space: nowrap;
+  font-size: 1.05em;
+  color: #2d3748;
+  white-space: nowrap;
 }
 .cardBodies {
-    color: #6B7280;
-    margin: 0;
+  color: #6b7280;
+  margin: 0;
+}
+
+.g-recaptcha {
+  transform: scale(0.77);
+  -webkit-transform: scale(0.77);
+  transform-origin: 0 0;
+  -webkit-transform-origin: 0 0;
 }

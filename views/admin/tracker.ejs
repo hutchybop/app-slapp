@@ -1,4 +1,4 @@
-<% layout('layouts/boilerplate') %>
+<% layout('layouts/adminBoilerplate') %>
 
 <% contentTitle = 'Tracker Analytics' %>
 
@@ -16,40 +16,40 @@
         <div class="col">
             <div class="card bg-primary text-white h-100">
                 <div class="card-body">
-                    <h5 class="card-title">Total Routes</h5>
-                    <h2 class="card-text"><%= stats.totalRoutes %></h2>
+                    <h5 class="card-title text-white">Total Routes</h5>
+                    <h2 class="card-text text-white"><%= stats.totalRoutes %></h2>
                 </div>
             </div>
         </div>
         <div class="col">
             <div class="card bg-success text-white h-100">
                 <div class="card-body">
-                    <h5 class="card-title">Unique IPs</h5>
-                    <h2 class="card-text"><%= stats.numberOfUniqueIPs %></h2>
+                    <h5 class="card-title text-white">Unique IPs</h5>
+                    <h2 class="card-text text-white"><%= stats.numberOfUniqueIPs %></h2>
                 </div>
             </div>
         </div>
         <div class="col">
             <div class="card bg-info text-white h-100">
                 <div class="card-body">
-                    <h5 class="card-title">Good Routes</h5>
-                    <h2 class="card-text"><%= stats.totalGoodRoutes %></h2>
+                    <h5 class="card-title text-white">Good Routes</h5>
+                    <h2 class="card-text text-white"><%= stats.totalGoodRoutes %></h2>
                 </div>
             </div>
         </div>
         <div class="col">
             <div class="card bg-warning text-white h-100">
                 <div class="card-body">
-                    <h5 class="card-title">Bad Routes</h5>
-                    <h2 class="card-text"><%= stats.totalBadRoutes %></h2>
+                    <h5 class="card-title text-white">Bad Routes</h5>
+                    <h2 class="card-text text-white"><%= stats.totalBadRoutes %></h2>
                 </div>
             </div>
         </div>
         <div class="col">
             <div class="card bg-danger text-white h-100">
                 <div class="card-body">
-                    <h5 class="card-title">Blocked IPs</h5>
-                    <h2 class="card-text"><%= stats.numberOfBlockedIPs %></h2>
+                    <h5 class="card-title text-white">Blocked IPs</h5>
+                    <h2 class="card-text text-white"><%= stats.numberOfBlockedIPs %></h2>
                     <a href="/admin/blocked-ips" class="btn btn-light btn-sm mt-2">Manage IPs</a>
                 </div>
             </div>

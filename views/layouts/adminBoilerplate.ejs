@@ -1,0 +1,30 @@
+<% layout('layouts/boilerplate') %>
+
+<!-- Page Specific Content -->
+<div class="container mt-3 mb-3">
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mt-2"><%= typeof contentTitle !== 'undefined' ? contentTitle : title %></h5>
+                    <div>
+                        <% if (typeof currentPath !== 'undefined') { %>
+                            <% if (currentPath.includes('/admin/tracker')) { %>
+                                <a href="/admin/blocked-ips" class="btn btn-outline-primary">Blocked IPs</a>
+                            <% } else if (currentPath.includes('/admin/blocked-ips')) { %>
+                                <a href="/admin/tracker" class="btn btn-outline-primary">Tracker</a>
+                            <% } else { %>
+                                <a href="/admin/tracker" class="btn btn-outline-primary">Tracker</a>
+                            <% } %>
+                        <% } else { %>
+                            <a href="/admin/tracker" class="btn btn-outline-primary">Tracker</a>
+                        <% } %>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <%- body %>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

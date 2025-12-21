@@ -9,13 +9,13 @@ module.exports.landing = async (req, res) => {
     if (req.query.success) {
       res.render("shoppinglist/slapp", {
         title: "Shopping List App - Create Your Weekly ShoppingList",
-        page: "slSlapp",
+        css_page: "slSlapp",
         success: req.query.success, // Add this line
       });
     } else {
       res.render("shoppinglist/slapp", {
         title: "Shopping List App - Create Your Weekly ShoppingList",
-        page: "slSlapp",
+        css_page: "slSlapp",
       });
     }
   } else {
@@ -42,7 +42,7 @@ module.exports.index = async (req, res) => {
   res.render("shoppinglist/index", {
     list,
     title: "All Shopping Lists",
-    page: "slIndex",
+    js_page: "slIndex",
   });
 };
 
@@ -53,7 +53,8 @@ module.exports.newMeals = async (req, res) => {
   res.render("shoppinglist/newMeals", {
     meals,
     title: "Create A Shopping List",
-    page: "slNewMeals",
+    css_page: "slNewMeals",
+    js_page: "slNewMeals",
   });
 };
 
@@ -215,7 +216,8 @@ module.exports.edit = async (req, res) => {
     catArray,
     id,
     title: `Edit ${shopList.name}`,
-    page: "slEditIng",
+    css_page: "slEditIng",
+    js_page: "slEditIng",
   });
 };
 
@@ -345,7 +347,8 @@ module.exports.show = async (req, res) => {
     copyList,
     catArray,
     title: `View ${shoppingListFinal.name}`,
-    page: "slShow",
+    css_page: "slShow",
+    js_page: "slShow",
   });
 };
 
@@ -365,7 +368,7 @@ module.exports.defaultGet = async (req, res) => {
   res.render("shoppinglist/default", {
     meals,
     title: "Change Daily Default Meals",
-    page: "slDefault",
+    css_page: "slDefault",
   });
 };
 
