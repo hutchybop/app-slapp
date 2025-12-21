@@ -2,10 +2,8 @@
     <div class="row">
         <div class="col-md-6">
             <div class="input-group mb-3">
-                <div class="input-group-prepend">
-                    <span class="input-group-text" id="basic-addon1">Friday</span>
-                </div>
-                <select class="custom-select" name="friday" id="friday">
+                <span class="input-group-text" id="basic-addon1">Friday</span>
+                <select class="form-select" name="friday" id="friday">
                     <% let defaultCountFri = 0 %>
                     <% for(let m of meals){ %>
                         <% if(m.default.includes('friday')) { %>
@@ -24,10 +22,8 @@
             </div>
 
             <div class="input-group mb-3">
-                <div class="input-group-prepend">
-                    <span class="input-group-text" id="basic-addon1">Saturday</span>
-                </div>
-                <select class="custom-select" name="saturday" id="saturday">
+                <span class="input-group-text" id="basic-addon1">Saturday</span>
+                <select class="form-select" name="saturday" id="saturday">
                     <% let defaultCountSatMon = 0 %>
                     <% for(let m of meals){ %>
                     <% if(m.default.includes('saturday')) { %>
@@ -46,10 +42,8 @@
             </div>
 
             <div class="input-group mb-3">
-                <div class="input-group-prepend">
-                    <span class="input-group-text" id="basic-addon1">Sunday</span>
-                </div>
-                <select class="custom-select" name="sunday" id="sunday">
+                <span class="input-group-text" id="basic-addon1">Sunday</span>
+                <select class="form-select" name="sunday" id="sunday">
                     <% let defaultCountSun = 0 %>
                     <% for(let m of meals){ %>
                     <% if(m.default.includes('sunday')) { %>
@@ -68,10 +62,8 @@
             </div>
 
             <div class="input-group mb-3">
-                <div class="input-group-prepend">
-                    <span class="input-group-text" id="basic-addon1">Monday</span>
-                </div>
-                <select class="custom-select" name="monday" id="monday">
+                <span class="input-group-text" id="basic-addon1">Monday</span>
+                <select class="form-select" name="monday" id="monday">
                     <% let defaultCountMon = 0 %>
                     <% for(let m of meals){ %>
                     <% if(m.default.includes('monday')) { %>
@@ -90,10 +82,8 @@
             </div>
 
             <div class="input-group mb-3">
-                <div class="input-group-prepend">
-                    <span class="input-group-text" id="basic-addon1">Tuesday</span>
-                </div>
-                <select class="custom-select" name="tuesday" id="tuesday">
+                <span class="input-group-text" id="basic-addon1">Tuesday</span>
+                <select class="form-select" name="tuesday" id="tuesday">
                     <% let defaultCountTues = 0 %>
                     <% for(let m of meals){ %>
                     <% if(m.default.includes('tuesday')) { %>
@@ -111,10 +101,8 @@
                 </select>
             </div>
             <div class="input-group mb-3">
-                <div class="input-group-prepend">
-                    <span class="input-group-text" id="basic-addon1">Wednesday</span>
-                </div>
-                <select class="custom-select" name="wednesday" id="wednesday">
+                <span class="input-group-text" id="basic-addon1">Wednesday</span>
+                <select class="form-select" name="wednesday" id="wednesday">
                     <% let defaultCountWed = 0 %>
                     <% for(let m of meals){ %>
                     <% if(m.default.includes('wednesday')) { %>
@@ -133,10 +121,8 @@
             </div>
 
             <div class="input-group mb-3">
-                <div class="input-group-prepend">
-                    <span class="input-group-text" id="basic-addon1">Thursday</span>
-                </div>
-                <select class="custom-select" name="thursday" id="thursday">
+                <span class="input-group-text" id="basic-addon1">Thursday</span>
+                <select class="form-select" name="thursday" id="thursday">
                     <% let defaultCountThurs = 0 %>
                     <% for(let m of meals){ %>
                     <% if(m.default.includes('thursday')) { %>
@@ -158,10 +144,8 @@
         <div class="col-md-6 d-flex flex-column">
             <div>
                 <div class=" input-group mb-3">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text" id="basic-addon1">Lunch Weekday</span>
-                    </div>
-                    <select class="custom-select" name="lunchWeekday" id="lunchWeekday">
+                    <span class="input-group-text" id="basic-addon1">Lunch Weekday</span>
+                    <select class="form-select" name="lunchWeekday" id="lunchWeekday">
                         <% let defaultCountDay = 0 %>
                         <% for(let m of meals){ %>
                         <% if(m.default.includes('lunchWeekday')) { %>
@@ -182,10 +166,8 @@
 
             <div>
                 <div class="input-group mb-3">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text" id="basic-addon1">Lunch Weekend</span>
-                    </div>
-                    <select class="custom-select" name="lunchWeekend" id="lunchWeekend">
+                    <span class="input-group-text" id="basic-addon1">Lunch Weekend</span>
+                    <select class="form-select" name="lunchWeekend" id="lunchWeekend">
                         <% let defaultCountEnd = 0 %>
                         <% for(let m of meals){ %>
                         <% if(m.default.includes('lunchWeekend')) { %>
@@ -206,10 +188,8 @@
 
             <div class="mb-auto">
                 <div class="input-group mb-3">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text" id="basic-addon1">Breakfast</span>
-                    </div>
-                    <select class="custom-select" name="breakfast" id="breakfast">
+                    <span class="input-group-text" id="basic-addon1">Breakfast</span>
+                    <select class="form-select" name="breakfast" id="breakfast">
                         <% let defaultCountBreaky = 0 %>
                         <% for(let m of meals){ %>
                         <% if(m.default.includes('breakfast')) { %>

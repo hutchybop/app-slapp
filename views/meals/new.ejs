@@ -41,7 +41,7 @@
 
                         <div class='form-group'>
                             <label for="mealType">Choose meal type:</label>
-                            <select name="mealType" id="mealType" class="custom-select">
+                            <select name="mealType" id="mealType" class="form-select">
                                 <% for(let t of mealType){ %>
                                 <option value="<%= t %>"> <%= t %> </option>
                                 <% } %>
@@ -96,7 +96,7 @@
 
                         <div class="form-group">
                             <label for="ingredient" class="form-label">Choose an ingredient:</label>
-                            <select name="ingredient" id="ingredient" class="custom-select">
+                            <select name="ingredient" id="ingredient" class="form-select">
                                 <% for(let i of items){ %>
                                 <option value="<%= i.name %>"> <%= i.name %> </option>
                                 <% } %>
@@ -113,7 +113,7 @@
 
                         <div class="form-group">
                             <label for="addTo">Add to:</label>
-                            <select name="addTo" id="addTo" class="custom-select">
+                            <select name="addTo" id="addTo" class="form-select">
                                 <option value="W">Weekly Items</option>
                                 <option value="R">Replace on Use Items</option>
                             </select>
@@ -160,7 +160,7 @@
                             <label class='form-label' for="newCat">
                                 Choose a category (used to help organise the final list):
                             </label>
-                            <select name="newCat" id="newCat" class="custom-select">
+                            <select name="newCat" id="newCat" class="form-select">
                                 <% for(let c = 0; c < catArray.length; c++){ %>
                                 <option value="<%= catArray[c] %>"> <%= catArray[c] %> </option>
                                 <% } %>
@@ -169,7 +169,7 @@
 
                         <div class="form-group">
                             <label class='form-label' for="newAddTo">Add to:</label>
-                            <select name="newAddTo" id="newAddTo" class="custom-select">
+                            <select name="newAddTo" id="newAddTo" class="form-select">
                                 <option value="W(n)">Weekly Items</option>
                                 <option value="R(n)">Replace on Use Items</option>
                             </select>

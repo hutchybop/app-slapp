@@ -20,7 +20,7 @@
             <div class="card mt-4 mb-3">
                 <div class="card-header">
                     <div class="d-flex">
-                        <div class="mr-auto">
+                        <div class="ms-auto">
                             <h4 class="card-title">All Your Shopping Lists</h4>
                             <h6>Will only store your last 10 saved lists</h6>
                         </div>
@@ -42,13 +42,13 @@
                                     </div>
                                     <div class="col-md-12 col-lg-6">
                                         <div class="d-flex">
-                                            <div class="pr-2">
+                                            <div class="pe-2">
                                                 <a class='btn btn-outline-primary btn-sm' href="/shoppinglist/<%=i.id%>">View</a>
                                             </div>
-                                            <div class="pr-2">
+                                            <div class="pe-2">
                                                 <a class='btn btn-outline-secondary btn-sm' href="/shoppinglist/edit/<%=i.id%>">Edit</a>
                                             </div>
-                                            <div class="pr-2">
+                                            <div class="pe-2">
                                                 <form id="slIndexAlertDelete<%=i.id%>" action="/shoppinglist/<%=i.id%>?_method=DELETE" method='post'>
                                                     <button form="slIndexAlertDelete<%=i.id%>" class='btn btn-outline-danger btn-sm' type="submit">Delete</button>
                                                 </form>

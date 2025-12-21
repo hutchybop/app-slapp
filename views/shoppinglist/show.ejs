@@ -177,15 +177,15 @@
                             <% for(let c = 0; c < catArray.length; c++) { %>
                             <% for (const [key, value] of Object.entries(i)) { %>
                             <% if(catArray[c] === value[1]) { %>
-                            <div class="form-group row ml-3">
+                            <div class="form-group row ms-3">
                                 <% if(value[0] == 1){ %>
                                 <input class="form-check-input" type="checkbox" value="" id="<%= key %>">
-                                <label class="form-check-label strikethrough pl-2" for="<%= key %>">
+                                <label class="form-check-label strikethrough ps-2" for="<%= key %>">
                                     <%= key %>
                                 </label>
                                 <% }else{ %>
                                 <input class="form-check-input" type="checkbox" value="" id="<%= key %>">
-                                <label class="form-check-label strikethrough pl-2" for="<%= key %>">
+                                <label class="form-check-label strikethrough ps-2" for="<%= key %>">
                                     <%= value[0] %> <%= key %>
                                 </label>
                                 <% } %>
