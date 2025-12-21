@@ -5,21 +5,16 @@ if (process.env.NODE_ENV !== "production") {
 // External Imports
 const express = require("express");
 const path = require("path");
-const mongoose = require("mongoose");
+const { mongoose } = require("mongoose");
 const { MongoStore } = require("connect-mongo");
+const mongoSanitize = require("express-mongo-sanitize");
 const ejsMate = require("ejs-mate");
 const methodOverride = require("method-override");
 const session = require("express-session");
-const flash = require("@codecorn/connect-flash-new");
 const back = require("express-back");
-const mongoSanitize = require("express-mongo-sanitize");
 const helmet = require("helmet");
 const compression = require("compression");
 const favicon = require("serve-favicon");
-const rateLimit = require("express-rate-limit");
-
-// Custom authentication
-const { authenticateUser, loginUser } = require("./utils/auth");
 
 // Required for recaptcha
 var Recaptcha = require("express-recaptcha").RecaptchaV2;
@@ -28,16 +23,26 @@ var recaptcha = new Recaptcha(process.env.SITEKEY, process.env.SECRETKEY, {
 });
 
 // Local imports
+const { getIpInfoMiddleware } = require("./utils/ipMiddleware");
+const { checkBlockedIP } = require("./utils/blockedIPMiddleware");
+const { trackRequest } = require("./utils/tracker");
+const {
+  generalLimiter,
+  authLimiter,
+  passwordResetLimiter,
+  registrationLimiter,
+} = require("./utils/rateLimiter");
+const { authenticateUser, loginUser } = require("./utils/auth"); // Custom authentication
+const flash = require("./utils/flash");
 const policy = require("./controllers/policy");
 const users = require("./controllers/users");
+const admin = require("./controllers/admin");
 const meals = require("./controllers/meals");
 const ingredients = require("./controllers/ingredients");
 const shoppingLists = require("./controllers/shoppingLists");
 const categories = require("./controllers/categories");
 const catchAsync = require("./utils/catchAsync");
-const logger = require("./utils/logger");
 const { errorHandler } = require("./utils/errorHandler");
-const User = require("./models/user");
 const {
   validateTandC,
   validateLogin,
@@ -56,6 +61,8 @@ const {
   isAuthorMeal,
   isAuthorIngredient,
   isAuthorShoppingList,
+  isAdmin,
+  populateUser,
 } = require("./utils/middleware");
 
 // Setting up express
@@ -67,15 +74,14 @@ if (process.env.NODE_ENV === "production") {
 }
 
 // Setting up mongoose
-const dbName = "slapp";
-let dbUrl;
-dbUrl =
-  "mongodb+srv://hutch:" +
-  process.env.MONGODB +
-  "@hutchybop.kpiymrr.mongodb.net/" +
-  dbName +
-  "?retryWrites=true&w=majority&appName=hutchyBop"; // For Atlas (Cloud db)
+const dbUrl = [
+  "mongodb+srv://hutch:",
+  process.env.MONGODB,
+  "@hutchybop.kpiymrr.mongodb.net/slapp?",
+  "retryWrites=true&w=majority&appName=hutchyBop",
+].join("");
 mongoose.connect(dbUrl);
+
 // Error Handling for the db connection
 const db = mongoose.connection;
 db.on("error", console.error.bind(console, "connection error:"));
@@ -96,10 +102,9 @@ app.set("view engine", "ejs"); // Sets ejs as the default engine
 app.set("views", path.join(__dirname, "views")); // Forces express to look at views directory for .ejs files
 app.use(express.json()); // Middleware to parse JSON bodies
 app.use(express.urlencoded({ extended: true })); // Makes req.body available
-app.use(methodOverride("_method")); // Allows us to add HTTP verbs other than post
+app.use(methodOverride("_method", { methods: ["POST", "GET"] })); // Allows us to add HTTP verbs other than post
 app.use(express.static(path.join(__dirname, "/public"))); // Serves static files (css, js, imgaes) from public directory
 
-// Instead of app.use(mongoSanitize()); req.query is now read only in express 5, So inline sanitation is required in the rest of the code
 // Helps to stop mongo injection by not allowing certain characters in the query string
 app.use((req, res, next) => {
   if (req.body)
@@ -108,9 +113,6 @@ app.use((req, res, next) => {
     req.params = mongoSanitize.sanitize(req.params, { replaceWith: "_" });
   next();
 });
-
-// Logs all routes requested
-app.use(logger);
 
 // Setting up helmet to allow certain scripts/stylesheets
 const scriptSrcUrls = [
@@ -217,8 +219,8 @@ const sessionConfig = {
   cookie: {
     maxAge: 1000 * 60 * 60 * 24 * 7 * 2, // 14 days
     httpOnly: true, // Prevent client-side JavaScript from accessing the cookie
-    SameSite: "strict", // Protect against CSRF
     secure: process.env.NODE_ENV === "production", // Only send cookie over HTTPS
+    SameSite: "strict", // Protect against CSRF
   },
   store: MongoStore.create({
     mongoUrl: dbUrl,
@@ -229,56 +231,19 @@ app.use(session(sessionConfig));
 // Required after session setup.
 app.use(flash());
 app.use(back());
-
-// Custom session serialization
-app.use((req, res, next) => {
-  if (req.session && req.session.userId) {
-    User.findById(req.session.userId)
-      .then((user) => {
-        if (!user) {
-          // User not found in database, clear session
-          delete req.session.userId;
-          req.user = null;
-        } else {
-          req.user = user;
-        }
-        next();
-      })
-      .catch((err) => next(err));
-  } else {
-    next();
-  }
-});
-
-// Rate limiting for authentication endpoints
-const authLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 10, // limit each IP to 10 requests per windowMs
-  message: "Too many authentication attempts, please try again later.",
-  standardHeaders: true,
-  legacyHeaders: false,
-});
-
-const passwordResetLimiter = rateLimit({
-  windowMs: 60 * 60 * 1000, // 1 hour
-  max: 5, // limit each IP to 5 password reset requests per hour
-  message: "Too many password reset attempts, please try again later.",
-  standardHeaders: true,
-  legacyHeaders: false,
-});
-
-// Compression to make website run quicker
-app.use(compression());
+app.use(populateUser); // Custom authentication middleware to populate user from session
+app.use(getIpInfoMiddleware); // Setting up IP middleware
+app.use(checkBlockedIP); // Blocked IP middleware - check before tracking
+app.use(trackRequest); // Tracker middleware - place after IP middleware but before compression
+app.use(compression()); // Compression to make website run quicker
+app.use(generalLimiter); // Apply general rate limiting to all requests
 
 app.use(async (req, res, next) => {
   res.locals.currentUser = req.user;
-  // Setting up flash
-  res.locals.success = req.flash("success");
-  res.locals.error = req.flash("error");
-
   next();
 });
 
+////////////////////////////// Routes //////////////////////////////
 // policy routes
 app.get("/policy/cookie-policy", policy.cookiePolicy);
 app.get("/policy/tandc", recaptcha.middleware.render, policy.tandc);
@@ -288,13 +253,12 @@ app.post(
   validateTandC,
   policy.tandcPost,
 );
-app.get("/policy/logs", catchAsync(policy.logs));
 
-// user routes
+// auth routes
 app.get("/auth/register", users.register);
 app.post(
   "/auth/register",
-  authLimiter,
+  registrationLimiter,
   validateRegister,
   catchAsync(users.registerPost),
 );
@@ -326,6 +290,17 @@ app.get("/auth/details", isLoggedIn, users.details);
 app.post("/auth/details", validateDetails, catchAsync(users.detailsPost));
 app.get("/auth/deletepre", isLoggedIn, users.deletePre);
 app.delete("/auth/delete", isLoggedIn, validateDelete, users.delete);
+
+// admin routes
+app.get("/admin/tracker", isLoggedIn, isAdmin, catchAsync(admin.tracker));
+app.get(
+  "/admin/blocked-ips",
+  isLoggedIn,
+  isAdmin,
+  catchAsync(admin.blockedIPs),
+);
+app.post("/admin/block-ip", isLoggedIn, isAdmin, catchAsync(admin.blockIP));
+app.post("/admin/unblock-ip", isLoggedIn, isAdmin, catchAsync(admin.unblockIP));
 
 // meal routes
 app.get("/meals", isLoggedIn, catchAsync(meals.index));
@@ -455,6 +430,9 @@ app.use((req, res) => {
     page: "error",
   });
 });
+
+// Tracker middleware
+app.use(trackRequest);
 
 // Error Handler, from utils.
 app.use(errorHandler);

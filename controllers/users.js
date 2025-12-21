@@ -105,6 +105,7 @@ module.exports.forgotPost = async (req, res) => {
 
     foundUser.resetPasswordToken = token;
     foundUser.resetPasswordExpires = PasswordUtils.generateResetTokenExpiry();
+    foundUser.resetPasswordUsed = false; // Reset the used flag
 
     await foundUser.save();
 
@@ -138,6 +139,7 @@ module.exports.forgotPost = async (req, res) => {
 module.exports.reset = async (req, res) => {
   const foundUser = await User.findOne({
     resetPasswordToken: req.params.token,
+    resetPasswordUsed: { $ne: true },
     resetPasswordExpires: { $gt: Date.now() },
   });
   if (!foundUser) {
@@ -157,6 +159,7 @@ module.exports.resetPost = async (req, res) => {
   try {
     const foundUser = await User.findOne({
       resetPasswordToken: req.params.token,
+      resetPasswordUsed: { $ne: true },
       resetPasswordExpires: { $gt: Date.now() },
     });
     if (!foundUser) {
@@ -170,9 +173,14 @@ module.exports.resetPost = async (req, res) => {
       return res.redirect("");
     }
 
-    await foundUser.setPassword(req.body.password);
+    // Set new password and invalidate token in one operation
+    foundUser.password = await PasswordUtils.hashPassword(req.body.password);
     foundUser.resetPasswordToken = undefined;
     foundUser.resetPasswordExpires = undefined;
+    foundUser.resetPasswordUsed = true; // Mark token as used
+    foundUser.hash = undefined;
+    foundUser.salt = undefined;
+
     await foundUser.save();
     await loginUser(req, foundUser);
 

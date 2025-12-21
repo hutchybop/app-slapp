@@ -30,6 +30,12 @@ const UserSchema = new Schema({
   },
   resetPasswordToken: String,
   resetPasswordExpires: Date,
+  resetPasswordUsed: Boolean,
+  role: {
+    type: String,
+    enum: ["user", "admin"],
+    default: "user",
+  },
 });
 
 // Helper function to detect passport-local-mongoose format

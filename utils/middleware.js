@@ -13,6 +13,7 @@ const {
   categorySchema,
   shoppingListIngredientsSchema,
 } = require("../models/schemas.js");
+const User = require("../models/user");
 const { Meal } = require("../models/meal");
 const { Ingredient } = require("../models/ingredient");
 const { ShoppingList } = require("../models/shoppingList");
@@ -22,6 +23,7 @@ const catchAsync = require("./catchAsync");
 const JoiFlashError = (error, req, res, next, url) => {
   if (error) {
     const msg = error.details.map((el) => el.message).join(",");
+    console.log("validation error message:", msg);
     if (process.env.NODE_ENV !== "production") {
       // Allows for generic message in production
       req.flash("error", `${msg}`);
@@ -33,7 +35,8 @@ const JoiFlashError = (error, req, res, next, url) => {
         "There has been a validation error, please try again.",
       );
     }
-    // throw new ExpressError(msg, 400) // ExpressError will send the user to the error page
+    // throw new ExpressError(msg, 400)
+    // ExpressError will send the user to the error page
     return res.redirect(`${url}`);
   } else {
     return next();
@@ -209,3 +212,32 @@ module.exports.isAuthorShoppingList = catchAsync(async (req, res, next) => {
   }
   next();
 });
+
+module.exports.populateUser = async (req, res, next) => {
+  if (req.session && req.session.userId) {
+    await User.findById(req.session.userId)
+      .then((user) => {
+        if (!user) {
+          // User not found in database, clear session
+          delete req.session.userId;
+          req.user = null;
+        } else {
+          req.user = user;
+        }
+        next();
+      })
+      .catch((err) => next(err));
+  } else {
+    next();
+  }
+};
+
+// Middleware to check if user is admin
+module.exports.isAdmin = (req, res, next) => {
+  const user = req.user;
+  if (!user || user.role !== "admin") {
+    req.flash("error", "You do not have permission to do that");
+    return res.redirect("/");
+  }
+  next();
+};
