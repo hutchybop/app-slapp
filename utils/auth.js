@@ -6,8 +6,11 @@ const authenticateUser = async (req, res, next) => {
     const { username, password } = req.body;
     const user = await User.findOne({ username });
 
+    // Use generic error message to prevent account enumeration
+    const genericError = "Invalid username or password";
+
     if (!user) {
-      req.flash("error", "User not found");
+      req.flash("error", genericError);
       return res.redirect("/auth/login");
     }
 
@@ -16,7 +19,7 @@ const authenticateUser = async (req, res, next) => {
       req.user = auth.user;
       return next();
     } else {
-      req.flash("error", "Invalid username or password");
+      req.flash("error", genericError);
       return res.redirect("/auth/login");
     }
   } catch (error) {

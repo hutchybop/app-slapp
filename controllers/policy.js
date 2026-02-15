@@ -13,6 +13,7 @@ module.exports.tandc = (req, res) => {
   res.render("policy/tandc", {
     captcha: res.recaptcha,
     title: "slapp.longrunner.co.uk Information Page",
+    js_page: "tandc",
     css_page: "tandc",
   });
 };

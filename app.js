@@ -17,8 +17,8 @@ const compression = require("compression");
 const favicon = require("serve-favicon");
 
 // Required for recaptcha
-var Recaptcha = require("express-recaptcha").RecaptchaV2;
-var recaptcha = new Recaptcha(process.env.SITEKEY, process.env.SECRETKEY, {
+const Recaptcha = require("express-recaptcha").RecaptchaV2;
+const recaptcha = new Recaptcha(process.env.SITEKEY, process.env.SECRETKEY, {
   callback: "cb",
 });
 
@@ -30,7 +30,7 @@ const {
   generalLimiter,
   authLimiter,
   passwordResetLimiter,
-  registrationLimiter,
+  formSubmissionLimiter,
 } = require("./utils/rateLimiter");
 const { authenticateUser, loginUser } = require("./utils/auth"); // Custom authentication
 const flash = require("./utils/flash");
@@ -41,8 +41,8 @@ const meals = require("./controllers/meals");
 const ingredients = require("./controllers/ingredients");
 const shoppingLists = require("./controllers/shoppingLists");
 const categories = require("./controllers/categories");
-const catchAsync = require("./utils/catchAsync");
 const { errorHandler } = require("./utils/errorHandler");
+const catchAsync = require("./utils/catchAsync");
 const {
   validateTandC,
   validateLogin,
@@ -74,11 +74,13 @@ if (process.env.NODE_ENV === "production") {
 }
 
 // Setting up mongoose
+const dbName = "slapp";
 const dbUrl = [
   "mongodb+srv://hutch:",
   process.env.MONGODB,
-  "@hutchybop.kpiymrr.mongodb.net/slapp?",
-  "retryWrites=true&w=majority&appName=hutchyBop",
+  "@hutchybop.kpiymrr.mongodb.net/",
+  dbName,
+  "?retryWrites=true&w=majority&appName=hutchyBop",
 ].join("");
 mongoose.connect(dbUrl);
 
@@ -212,7 +214,7 @@ configureHelmet();
 
 //Setting up the session
 const sessionConfig = {
-  name: "slapp", // Name for the session cookie
+  name: "slapp_longrunner", // Name for the session cookie
   secret: process.env.SESSION_KEY, // Secures the session
   resave: false, // Do not save session if unmodified
   saveUninitialized: false, // Do not create session until something stored
@@ -250,6 +252,7 @@ app.get("/policy/tandc", recaptcha.middleware.render, policy.tandc);
 app.post(
   "/policy/tandc",
   recaptcha.middleware.verify,
+  formSubmissionLimiter,
   validateTandC,
   policy.tandcPost,
 );
@@ -258,7 +261,7 @@ app.post(
 app.get("/auth/register", users.register);
 app.post(
   "/auth/register",
-  registrationLimiter,
+  authLimiter,
   validateRegister,
   catchAsync(users.registerPost),
 );
@@ -287,7 +290,12 @@ app.post(
 app.get("/auth/reset/:token", users.reset);
 app.post("/auth/reset/:token", validateReset, catchAsync(users.resetPost));
 app.get("/auth/details", isLoggedIn, users.details);
-app.post("/auth/details", validateDetails, catchAsync(users.detailsPost));
+app.post(
+  "/auth/details",
+  validateDetails,
+  formSubmissionLimiter,
+  catchAsync(users.detailsPost),
+);
 app.get("/auth/deletepre", isLoggedIn, users.deletePre);
 app.delete("/auth/delete", isLoggedIn, validateDelete, users.delete);
 
@@ -305,7 +313,13 @@ app.post("/admin/unblock-ip", isLoggedIn, isAdmin, catchAsync(admin.unblockIP));
 // meal routes
 app.get("/meals", isLoggedIn, catchAsync(meals.index));
 app.get("/meals/new", isLoggedIn, catchAsync(meals.new));
-app.post("/meals", isLoggedIn, validateMeal, catchAsync(meals.create));
+app.post(
+  "/meals",
+  isLoggedIn,
+  validateMeal,
+  formSubmissionLimiter,
+  catchAsync(meals.create),
+);
 app.get("/meals/:id", isLoggedIn, isAuthorMeal, catchAsync(meals.show));
 app.get("/meals/:id/edit", isLoggedIn, isAuthorMeal, catchAsync(meals.edit));
 app.put(
@@ -330,6 +344,7 @@ app.put(
   isLoggedIn,
   validateIngredient,
   isAuthorIngredient,
+  formSubmissionLimiter,
   catchAsync(ingredients.update),
 );
 app.delete(
@@ -352,12 +367,14 @@ app.patch(
   "/shoppinglist/default",
   isLoggedIn,
   validatedefault,
+  formSubmissionLimiter,
   catchAsync(shoppingLists.defaultPatch),
 );
 app.post(
   "/shoppinglist",
   isLoggedIn,
   validateshoppingListMeals,
+  formSubmissionLimiter,
   catchAsync(shoppingLists.createMeals),
 );
 app.get(
@@ -371,6 +388,7 @@ app.put(
   isLoggedIn,
   validateshoppingListIngredients,
   isAuthorShoppingList,
+  formSubmissionLimiter,
   catchAsync(shoppingLists.createIngredients),
 );
 app.get(
@@ -396,30 +414,13 @@ app.post(
   "/category/customise",
   isLoggedIn,
   validateCategory,
+  formSubmissionLimiter,
   catchAsync(categories.updateCustomise),
 );
 
-if (process.env.NODE_ENV !== "production") {
-  // Debug session route (remove in production)
-  app.get("/debug/session", (req, res) => {
-    res.json({
-      sessionId: req.sessionID,
-      userId: req.session.userId,
-      user: req.user
-        ? {
-            id: req.user._id,
-            username: req.user.username,
-            email: req.user.email,
-          }
-        : null,
-      session: req.session,
-    });
-  });
-}
-
 // Site-Map route
 app.get("/sitemap.xml", (req, res) => {
-  res.sendFile("/home/hutch/slapp/public/manifest/sitemap.xml");
+  res.sendFile(path.join(__dirname, "public", "manifest", "sitemap.xml"));
 });
 
 // Unknown (404) webpage error
@@ -439,6 +440,6 @@ app.use(errorHandler);
 
 // Start server on port 3001 using HTTP
 const port = 3001;
-app.listen(port, () => {
+app.listen(port, "0.0.0.0", () => {
   console.log("Server listening on PORT", port);
 });
