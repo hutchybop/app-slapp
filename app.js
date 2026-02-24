@@ -461,6 +461,6 @@ app.use(errorHandler);
 
 // Start server on port 3001 using HTTP
 const port = 3001;
-app.listen(port, "172.17.0.1", () => {
+app.listen(port, "0,0,0,0", () => {
   console.log("Server listening on PORT", port);
 });
