@@ -459,8 +459,8 @@ app.use((req, res) => {
 // Error Handler, from utils.
 app.use(errorHandler);
 
-// Start server on port 3001 using HTTP
+// Start server on port using HTTP
 const port = 3001;
 app.listen(port, "0.0.0.0", () => {
-  console.log("Server listening on PORT", port);
+  console.log(`Server running on port ${port} on all interfaces`);
 });
