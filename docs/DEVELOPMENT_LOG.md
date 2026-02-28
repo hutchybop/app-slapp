@@ -1,5 +1,25 @@
 # DEVELOPMENT_LOG.md
 
+## Session 36
+
+### Saturday February 28th
+
+<br>
+
+**Summary:** This session focused on updating npm packages to their latest versions. The updates included changes to package.json, package-lock.json, and app.js to maintain compatibility with the newest dependencies.
+
+**Git Branch:** main <br>
+**Git commits:** <br>
+930923c82094f1ceaf11383f38dd7c748fb59506
+
+**Session git history:**
+
+- Update npm packages 20260228-1455 - _Updated npm packages to latest versions_
+
+---
+
+<br>
+
 ## Session 35
 
 ### Tuesday December 2nd
@@ -14,7 +34,7 @@ d3c83b97bda4966ea0be0bacfe7caf6e4e7d23ea
 
 **Session git history:**
 
-- update browser/server side validations - *Enhanced validation systems for improved security and user experience*
+- update browser/server side validations - _Enhanced validation systems for improved security and user experience_
 
 ---
 
