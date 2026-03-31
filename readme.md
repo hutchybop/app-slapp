@@ -1,3 +1,18 @@
+# ⚠️ Archived Project
+
+### This repository has been archived and is no longer actively maintained.
+
+- No new features or bug fixes will be added
+- Issues and pull requests are no longer monitored
+- If you’d like to continue development, feel free to fork the project.
+
+Last maintained: 20260331
+
+Superseded by: longrunner-platform (monrepo project)
+
+---
+---
+
 # 🛒 Shopping List Web App
 
 A work-in-progress shopping list web application built with **Node.js**, **Express**, **EJS**, and **MongoDB** (via Mongoose).  
